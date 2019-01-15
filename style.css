@@ -15,7 +15,7 @@ pre code {
   white-space: inherit;
 }
 p,li {
-  font-family: "Consolas", "微軟正黑體", "Microsoft JhengHei";
+  font-family: "Trebuchet MS", "Consolas", "微軟正黑體", "Microsoft JhengHei";
 }
 
 .r{
@@ -33,16 +33,16 @@ p,li {
 
 title{
   color: #cc0000;
-  font-family: "Consolas", "微軟正黑體", "Microsoft JhengHei";
+  font-family: "Trebuchet MS", "Consolas", "微軟正黑體", "Microsoft JhengHei";
 }
 
 body{
-  font-family: "Consolas", "微軟正黑體", "Microsoft JhengHei";
+  font-family: "Trebuchet MS", "Consolas", "微軟正黑體", "Microsoft JhengHei";
 }
 
 h1,h2,h3,h4,h5{
   color: #0066ff;
-  font-family: "Consolas", "微軟正黑體", "Microsoft JhengHei";
+  font-family: "Trebuchet MS", "Consolas", "微軟正黑體", "Microsoft JhengHei";
 }
 
 
