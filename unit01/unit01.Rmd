@@ -1,6 +1,6 @@
 ---
 title: "Unit01 - R & RStudio"
-author: "卓雍然 D994010001"
+author: "卓雍然"
 date: "`r Sys.time()`"
 output: 
   html_document:
