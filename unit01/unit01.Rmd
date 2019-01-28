@@ -19,7 +19,7 @@ When you click the **Knit** button a document will be generated that includes bo
 summary(cars)
 ```
 
-### Test 2
+### Test B
 
 You can also embed plots, for example:
 
