@@ -1,6 +1,7 @@
-### R程式語言、機率統計與商業實務
 
-##### 國立中山大學 管理學院 
+### <span style="font-family:'Microsoft JhengHei';">程式語言、機率統計與商業實務</span>
+
+##### [<span style="font-family:'Microsoft JhengHei';">國立中山大學 管理學院</span>](https://bap.cm.nsysu.edu.tw/)
 
 <hr>
 
@@ -8,7 +9,11 @@
 
 <hr>
 
-#### 內容大綱：
+#### <span style="font-family:'Microsoft JhengHei';">內容大綱：</span>
 
-* [第一單元：商業分析、機率與程式](https://gtonychuo.github.io/2019RPB/unit01/unit01.html)
+
+
+* [<span style="font-family:'Microsoft JhengHei';">第一單元：商業分析、機率與程式</span>](https://gtonychuo.github.io/2019RPB/unit01/unit01.html)
+
+
 
