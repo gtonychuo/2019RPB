@@ -1,5 +1,5 @@
 ---
-title: 第一單元：商業分析、機率統計與程式語言
+title: 第一單元：商業分析、機率與程式
 author: 中山大學管理學院 卓雍然
 date: "`r Sys.time()`"
 output: 
