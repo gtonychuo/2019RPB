@@ -1,0 +1,122 @@
+---
+title: 第一單元：商業分析、機率統計與程式語言
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: ../style.css
+---
+
+<br><hr>
+基本的程式筆記設定
+```{r results='hide', message=FALSE, warning=FALSE}
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=4, width=90)
+```
+
+安裝、載入一些基本的套件
+```{r results='hide', message=FALSE, warning=FALSE}
+if(!require(devtools)) install.packages("devtools")
+if(!require(devtools)) devtools::install_github("hadley/emo")
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(magrittr)
+```
+
+
+
+<br><hr>
+### 【A】 商業分析的基礎 Business Analytics Fundamentals
+
+##### A1. 機率與策略的期望報酬 Probability & Expected Payoff of a Strategy
+Given a strategy which may lead to $n$ different outcomes ...
+
++ $p_i$ : the probability of the $i$-th outcome 
++ $v_i$ : the payoff of the $i$-th outcome
++ $\pi$ : the expected payoff of the strategy
+
+$$\pi = \sum_{i=1}^{n} p_i \times v_i \qquad(1)$$ 
+
+```{r}
+p = c(0.1, 0.2, 0.3, 0.4)
+v = c(100, 50, -50, 0)
+( pi = sum(p * v) )
+```
+
+##### A2. 策略選項與決策 Choicing from Several Startegy
+Given $K$ strategies, we look for the startegy with the largest expected payoff.
+
++ $p_{k,i}$ : the probability of the $i$-th outcome in the $k$-th strategy
+
+```{r}
+p = matrix(c(
+  0.1, 0.2, 0.3, 0.4,
+  0.2, 0.3, 0.4, 0.1,
+  0.1, 0.2, 0.2, 0.5,
+  0.2, 0.5, 0.1, 0.2
+  ), byrow=T, nrow=4); p
+```
+
++ $v_{i}$ : the payoff of the $i$-th outcome
++ $\pi_k$ : the expected payoff of the $k$-th strategy
+
+$$\pi_k = \sum_{i=1}^{n} p_{k,i} \times v_i \qquad(2)$$ 
+
+```{r}
+v = c(100, 50, -50, 0)
+( pi = apply(p, 1, crossprod, v) )
+```
+
+
+<br><hr>
+### 【B】 R語言簡介 Intro. to R
+
+##### B1. 資料種類 Data Types
+Examples of scaler object
+```{r}
+noTimes = 3                    # integer
+myWeight = 75.2                # numeric
+isAsian = TRUE                 # Boolin
+myName = "Tony Chuo"           # character 
+date1 = as.Date("2019-01-01")  # Date
+```
+
+Examples of vector object (variable)
+```{r}
+gender = factor( c("Male", "Female", "Female", "Female", "Male") )
+male = c(TRUE, FALSE, FALSE, FALSE, TRUE)
+```
+
+
+<br><hr>
+### 【X】 補充教材
+Clean Environment
+```{r}
+rm(list=ls(all=TRUE))
+```
+
+##### 3.1 `magrittr` package & `%>%` operator
+```{r}
+x = c(1, 2, 3, 4, 5)
+sum(x)
+mean(x)
+```
+
+```{r}
+x %>% sum
+x %>% mean
+```
+
+##### 3.2 Functional Programming `apply()`, `lapply()`, `sapply()`
+```{r fig.height=8}
+s1 = c(0.5, 5, 1, 2, 2); s2 = c(0.5, 1, 3, 2, 5); n = 200
+par(mfrow=c(5,1), mar=c(2,2,4,1))
+x = sapply(1:5, function(i) hist(rbeta(n, s1[i], s2[i])))
+```
+
+
+
