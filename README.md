@@ -1,7 +1,7 @@
 
 **程式語言、機率統計與商業實務**
 
-*by：*[國立中山大學 管理學院 管理學術研究中心](https://bap.cm.nsysu.edu.tw/)
+*by*：[國立中山大學 管理學院 管理學術研究中心](https://bap.cm.nsysu.edu.tw/)
 
 <hr>
 
