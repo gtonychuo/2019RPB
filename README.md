@@ -1,7 +1,7 @@
 
-### <span style="font-family:'TW-Kai';">程式語言、機率統計與商業實務</span>
+#### <span style="font-family:'TW-Kai';">程式語言、機率統計與商業實務</span>
 
-##### [<span style="font-family:'DFKai-SB';">國立中山大學 管理學院</span>](https://bap.cm.nsysu.edu.tw/)
+[<span style="font-family:'DFKai-SB';">國立中山大學 管理學院</span>](https://bap.cm.nsysu.edu.tw/)
 
 <hr>
 
