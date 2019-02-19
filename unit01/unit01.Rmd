@@ -17,6 +17,7 @@ knitr::opts_chunk$set(comment = NA)
 knitr::opts_knit$set(global.par = TRUE)
 par(cex=0.8)
 options(scipen=20, digits=4, width=90)
+Sys.setlocale('LC_ALL','C')
 ```
 
 安裝、載入一些基本的套件
@@ -35,88 +36,196 @@ pacman::p_load(magrittr)
 ##### A1. 機率與策略的期望報酬 Probability & Expected Payoff of a Strategy
 Given a strategy which may lead to $n$ different outcomes ...
 
-+ $p_i$ : the probability of the $i$-th outcome 
++ $p_i$ : the probability of the $i$-th outcome, $i \in [1, n]$
 + $v_i$ : the payoff of the $i$-th outcome
 + $\pi$ : the expected payoff of the strategy
 
 $$\pi = \sum_{i=1}^{n} p_i \times v_i \qquad(1)$$ 
-
+分別把報酬($v_i$)和機率($p_i$)放在`v`和`p`這兩個數值向量之中
 ```{r}
-p = c(0.1, 0.2, 0.3, 0.4)
 v = c(100, 50, -50, 0)
-( pi = sum(p * v) )
+p = c(0.1, 0.2, 0.3, 0.4)
 ```
+
+算出$\pi$的值，放在`payoff`這個物件裡面，並且把它列印出來
+```{r}
+payoff = sum(p * v)
+payoff
+```
+<br>
 
 ##### A2. 策略選項與決策 Choicing from Several Startegy
 Given $K$ strategies, we look for the startegy with the largest expected payoff.
 
-+ $p_{k,i}$ : the probability of the $i$-th outcome in the $k$-th strategy
-
-```{r}
-p = matrix(c(
-  0.1, 0.2, 0.3, 0.4,
-  0.2, 0.3, 0.4, 0.1,
-  0.1, 0.2, 0.2, 0.5,
-  0.2, 0.5, 0.1, 0.2
-  ), byrow=T, nrow=4); p
-```
-
 + $v_{i}$ : the payoff of the $i$-th outcome
-+ $\pi_k$ : the expected payoff of the $k$-th strategy
++ $p_{j,i}$ : the probability of the $i$-th outcome in the $j$-th strategy
 
-$$\pi_k = \sum_{i=1}^{n} p_{k,i} \times v_i \qquad(2)$$ 
-
+將機率($p_{j,i}$)放在`p`這個數值向量之中 (重複使用同一個名稱)
 ```{r}
 v = c(100, 50, -50, 0)
-( pi = apply(p, 1, crossprod, v) )
+p = matrix(c(
+  0.1,0.2,0.3,0.4,
+  0.2,0.3,0.4,0.1,
+  0.1,0.1,0.1,0.5,
+  0.2,0.5,0.1,0.2
+  ), byrow=F, nrow=4)
 ```
+
++ $\pi_j$ : the expected payoff of the $j$-th strategy, $j \in [1,K]$
+
+$$\pi_j = \sum_{i=1}^{n} p_{j,i} \times v_i \qquad(2)$$ 
+
+算出$\pi$的值，放在`payoff`這個物件裡面，並且把它列印出來
+```{r}
+payoff = crossprod(p, v)
+payoff
+```
+現在`payoff`是一個4x1的數值矩陣
+
+```{r}
+payoff = colSums(p * v)
+payoff
+```
+現在`payoff`是一個長度為4的數值向量
 
 
 <br><hr>
-### 【B】 R語言簡介 Intro. to R
+### 【B】 R語言簡介 Introduction to R
 
-##### B1. 資料種類 Data Types
-Examples of scaler object
+##### B1. 『值』的種類 Types of Values
+Examples of automic (scaler) object
 ```{r}
-noTimes = 3                    # integer
-myWeight = 75.2                # numeric
-isAsian = TRUE                 # Boolin
-myName = "Tony Chuo"           # character 
-date1 = as.Date("2019-01-01")  # Date
+noTimes = 3L                   # 整數 integer
+myWeight = 75.2                # 數值 numeric
+isAsian = TRUE                 # 邏輯 Boolin
+myName = "Tony Chuo"           # 字串 character 
+date1 = as.Date("2019-01-01")  # 日期 Date
 ```
 
-Examples of vector object (variable)
+##### B2. 基本資料結構 - 向量 Vector
+向量是R的基本資料結構，
+`noTime`、`myWeight`、`isAsian`、`myName`、`date1`
+其實都是**長度為1**的向量物件
+
+Examples of Vector Object 
 ```{r}
-gender = factor( c("Male", "Female", "Female", "Female", "Male") )
-male = c(TRUE, FALSE, FALSE, FALSE, TRUE)
+noBuy = c(3L, 5L, 1L, 1L, 3L)               # 整數向量
+height = c(175, 168, 180, 181, 169)         # 數值向量
+isMale = c(FALSE, TRUE, FALSE, TRUE, TRUE)  # 邏輯向量
 ```
 
-
-<br><hr>
-### 【X】 補充教材
-Clean Environment
+Example of Character Vector
 ```{r}
-rm(list=ls(all=TRUE))
+name = c("Amy", "Bob", "Cindy", "Danny", "Edward")  # 字串向量
 ```
 
-##### 3.1 `magrittr` package & `%>%` operator
+Example of Factor vector  
 ```{r}
-x = c(1, 2, 3, 4, 5)
-sum(x)
-mean(x)
+gender = factor( c("F", "M", "F", "M", "M") )     # 類別向量
+skin_color = factor( c("black", "black", "white", "yellow", "white") )
+```
+
+##### B3. 運算符號 (Operator)
+早期的R，其最主要的目的就是要簡化向量運算，四則運算都可以直接作用在向量上面
+```{r}
+c(1, 2, 3, 4) * c(1, 10, 100, 1000)
+```
+
+連續的整數 
+```{r}
+1:6
+```
+
+次方運算和科學記號
+```{r}
+10^(-2:3)
+```
+
+當向量不一樣長時 ...
+```{r}
+c(100, 200, 300, 400) / c(10, 20)
+```
+
+單值：長度為1的向量
+```{r}
+c(100, 200, 300, 400) / 10
 ```
 
 ```{r}
-x %>% sum
-x %>% mean
+c(10,20,30,40,50,60,70,80) + c(1, 2, 3)
 ```
 
-##### 3.2 Functional Programming `apply()`, `lapply()`, `sapply()`
-```{r fig.height=8}
-s1 = c(0.5, 5, 1, 2, 2); s2 = c(0.5, 1, 3, 2, 5); n = 200
-par(mfrow=c(5,1), mar=c(2,2,4,1))
-x = sapply(1:5, function(i) hist(rbeta(n, s1[i], s2[i])))
+指定物件的名稱： `=` 和 `<-` Assignment Operator
+```{r}
+Prob = c(0.1, 0.2, 0.3, 0.4)
+Value = c(120, 100, -50, -60)
+Prob * Value
 ```
 
+##### B4. 功能與參數 Function & Argument
+The Expected Payoff is： $\sum p \times v$
+```{r}
+expPayoff = sum(Prob * Value)
+expPayoff
+```
 
+內建功能通常第一個參數都是向量物件
+```{r}
+sqrt(1:9)
+```
+
+功能參數的：
+
++ 名稱
++ 位置
++ 預測值
+
+```{r}
+log(1000)
+```
+
+```{r eval=F}
+help(log)
+```
+
+```{r}
+log(x=1000, base=10)
+```
+
+```{r}
+log(1000,10)
+```
+
+##### B5. 連續呼叫功能
+```{r}
+round(sqrt(1:9), 3)
+```
+
+```{r}
+sqrt(1:9) %>% round(3) 
+```
+
+##### B6. 資料框 DataFrame
+```{r}
+df = data.frame(
+  noBuy = c(3L, 5L, 1L, 1L, 3L),
+  height = c(175, 168, 180, 181, 169),
+  isMale = c(FALSE, TRUE, FALSE, TRUE, TRUE),
+  name = c("Amy", "Bob", "Cindy", "Danny", "Edward"),
+  gender = factor( c("F", "M", "F", "M", "M") ),
+  skin_color = factor( c("black", "black", "white", "yellow", "white") )
+  )
+
+df
+```
+
+```{r}
+mean(df$height)
+```
+
+```{r}
+tapply(df$height, df$gender, mean)
+```
+
+<br><br><br><hr>
 
