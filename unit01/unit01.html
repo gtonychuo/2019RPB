@@ -147,7 +147,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">第一單元：商業分析、機率與程式</h1>
 <h4 class="author"><em>中山大學管理學院 卓雍然</em></h4>
-<h4 class="date"><em>2019-02-19 15:03:05</em></h4>
+<h4 class="date"><em>2019-02-19 15:04:29</em></h4>
 
 </div>
 
@@ -159,8 +159,7 @@ $(document).ready(function () {
 knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">comment =</span> <span class="ot">NA</span>)
 knitr<span class="op">::</span>opts_knit<span class="op">$</span><span class="kw">set</span>(<span class="dt">global.par =</span> <span class="ot">TRUE</span>)
 <span class="kw">par</span>(<span class="dt">cex=</span><span class="fl">0.8</span>)
-<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">20</span>, <span class="dt">digits=</span><span class="dv">4</span>, <span class="dt">width=</span><span class="dv">90</span>)
-<span class="kw">Sys.setlocale</span>(<span class="st">'LC_ALL'</span>,<span class="st">'C'</span>)</code></pre></div>
+<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">20</span>, <span class="dt">digits=</span><span class="dv">4</span>, <span class="dt">width=</span><span class="dv">90</span>)</code></pre></div>
 <p>安裝、載入一些基本的套件</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) <span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
 <span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;hadley/emo&quot;</span>)
@@ -265,8 +264,8 @@ skin_color =<span class="st"> </span><span class="kw">factor</span>( <span class
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>, <span class="dv">400</span>) <span class="op">/</span><span class="st"> </span><span class="dv">10</span></code></pre></div>
 <pre><code>[1] 10 20 30 40</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>,<span class="dv">40</span>,<span class="dv">50</span>,<span class="dv">60</span>,<span class="dv">70</span>,<span class="dv">80</span>) <span class="op">+</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</code></pre></div>
-<pre><code>Warning in c(10, 20, 30, 40, 50, 60, 70, 80) + c(1, 2, 3): 頛�隞園摨虫蒂���剔隞園
-摨衣��</code></pre>
+<pre><code>Warning in c(10, 20, 30, 40, 50, 60, 70, 80) + c(1, 2, 3): 較長的物件長度並非較短物件長度
+的倍數</code></pre>
 <pre><code>[1] 11 22 33 41 52 63 71 82</code></pre>
 <p>指定物件的名稱： <code>=</code> 和 <code>&lt;-</code> Assignment Operator</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Prob =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>)
