@@ -147,7 +147,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">第一單元：商業分析、機率與程式</h1>
 <h4 class="author"><em>中山大學管理學院 卓雍然</em></h4>
-<h4 class="date"><em>2019-02-19 15:04:29</em></h4>
+<h4 class="date"><em>2019-02-20 00:47:09</em></h4>
 
 </div>
 
@@ -235,7 +235,7 @@ date1 =<span class="st"> </span><span class="kw">as.Date</span>(<span class="st"
 </div>
 <div id="b2.-----vector" class="section level5">
 <h5>B2. 基本資料結構 - 向量 Vector</h5>
-<p>向量是R的基本資料結構， <code>noTime</code>、<code>myWeight</code>、<code>isAsian</code>、<code>myName</code>、<code>date1</code> 其實都是<strong>長度為1</strong>的向量物件</p>
+<p><span style="font-size:24px">💡:</span> 向量是R的基本資料結構<br>     ※ <code>noTime</code>、<code>myWeight</code>、<code>isAsian</code>、<code>myName</code>、<code>date1</code> 其實都是<strong>長度為1</strong>的向量物件<br></p>
 <p>Examples of Vector Object</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">noBuy =<span class="st"> </span><span class="kw">c</span>(3L, 5L, 1L, 1L, 3L)               <span class="co"># 整數向量</span>
 height =<span class="st"> </span><span class="kw">c</span>(<span class="dv">175</span>, <span class="dv">168</span>, <span class="dv">180</span>, <span class="dv">181</span>, <span class="dv">169</span>)         <span class="co"># 數值向量</span>
@@ -248,7 +248,7 @@ skin_color =<span class="st"> </span><span class="kw">factor</span>( <span class
 </div>
 <div id="b3.--operator" class="section level5">
 <h5>B3. 運算符號 (Operator)</h5>
-<p>早期的R，其最主要的目的就是要簡化向量運算，四則運算都可以直接作用在向量上面</p>
+<p><span style="font-size:24px">💡:</span> 早期的R，其最主要的目的就是要簡化向量運算<br>     ※ 四則運算和內建功能大多都可以直接作用在向量上面<br></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>) <span class="op">*</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">1000</span>)</code></pre></div>
 <pre><code>[1]    1   20  300 4000</code></pre>
 <p>連續的整數</p>
@@ -282,12 +282,7 @@ expPayoff</code></pre></div>
 <p>內建功能通常第一個參數都是向量物件</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sqrt</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">9</span>)</code></pre></div>
 <pre><code>[1] 1.000 1.414 1.732 2.000 2.236 2.449 2.646 2.828 3.000</code></pre>
-<p>功能參數的：</p>
-<ul>
-<li>名稱</li>
-<li>位置</li>
-<li>預測值</li>
-</ul>
+<p><span style="font-size:24px">💡:</span> R的功能通常都有很多個參數，我們需要注意參數的：<br>     ※ 名稱<br>     ※ 位置<br>     ※ 預測值<br></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">log</span>(<span class="dv">1000</span>)</code></pre></div>
 <pre><code>[1] 6.908</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">help</span>(log)</code></pre></div>

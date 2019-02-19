@@ -102,9 +102,12 @@ date1 = as.Date("2019-01-01")  # 日期 Date
 ```
 
 ##### B2. 基本資料結構 - 向量 Vector
-向量是R的基本資料結構，
-`noTime`、`myWeight`、`isAsian`、`myName`、`date1`
-其實都是**長度為1**的向量物件
+
+<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+向量是R的基本資料結構<br>
+&emsp; &emsp; ※ `noTime`、`myWeight`、`isAsian`、`myName`、`date1`
+其實都是**長度為1**的向量物件<br>
+
 
 Examples of Vector Object 
 ```{r}
@@ -125,7 +128,11 @@ skin_color = factor( c("black", "black", "white", "yellow", "white") )
 ```
 
 ##### B3. 運算符號 (Operator)
-早期的R，其最主要的目的就是要簡化向量運算，四則運算都可以直接作用在向量上面
+
+<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+早期的R，其最主要的目的就是要簡化向量運算<br>
+&emsp; &emsp; ※ 四則運算和內建功能大多都可以直接作用在向量上面<br>
+
 ```{r}
 c(1, 2, 3, 4) * c(1, 10, 100, 1000)
 ```
@@ -173,11 +180,12 @@ expPayoff
 sqrt(1:9)
 ```
 
-功能參數的：
+<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+R的功能通常都有很多個參數，我們需要注意參數的：<br>
+&emsp; &emsp; ※ 名稱<br>
+&emsp; &emsp; ※ 位置<br>
+&emsp; &emsp; ※ 預測值<br>
 
-+ 名稱
-+ 位置
-+ 預測值
 
 ```{r}
 log(1000)
