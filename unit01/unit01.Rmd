@@ -184,7 +184,7 @@ sqrt(1:9)
 R的功能通常都有很多個參數，我們需要注意參數的：<br>
 &emsp; &emsp; ※ 名稱<br>
 &emsp; &emsp; ※ 位置<br>
-&emsp; &emsp; ※ 預測值<br>
+&emsp; &emsp; ※ 預設值<br>
 
 
 ```{r}
