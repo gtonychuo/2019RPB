@@ -70,3 +70,7 @@ table(qA$uR, qA$level)
 
 write.table(qE, file="clipboard", sep="\t", row.names=F)
 write.table(qA, file="clipboard", sep="\t", row.names=F)
+
+save(d1,d2,q1,q2,qA,qE,q119,ta,file="grouping.rdata")
+
+
