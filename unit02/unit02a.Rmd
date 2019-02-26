@@ -1,0 +1,338 @@
+---
+title: 第二單元：R語言簡介
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: ../style.css
+---
+
+<br><hr>
+基本的程式筆記設定
+```{r results='hide', message=FALSE, warning=FALSE}
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=4, width=90)
+```
+
+安裝、載入一些基本的套件
+```{r results='hide', message=FALSE, warning=FALSE}
+if(!require(devtools)) install.packages("devtools")
+if(!require(devtools)) devtools::install_github("hadley/emo")
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(magrittr)
+```
+以上這些程式碼請大家不要去改動
+
+<br><hr>
+###【A】一個最簡單的R程式
+
+Given a strategy which may lead to $n$ different outcomes ...
+
++ $p_i$ : the probability of the $i$-th outcome, $i \in [1, n]$
++ $v_i$ : the payoff of the $i$-th outcome
++ $\pi$ : the expected payoff of the strategy
+
+$$\pi = \sum_{i=1}^{n} p_i \times v_i \qquad(1)$$ 
+
+**1. 定義資料物件：** 分別把報酬($v_i$)和機率($p_i$)放在`v`和`p`這兩個<z>數值向量</z>之中
+```{r}
+v = c(100, 50, -50, 0)
+p = c(0.1, 0.2, 0.3, 0.4)
+```
+
+**2. 執行運算式**
+用`sum(p * v)`這一個<z>運算式</z>算出$\pi$的值，放在`payoff`這個<z>物件</z>裡面，
+```{r}
+payoff = sum(p * v)
+```
+
+**3. 印出結果 **
+並且把它列印出來
+```{r}
+payoff
+```
+
+<br><hr>
+###【B】基本『值』的種類 Types of Automic Values
+```{r}
+noTimes = 3L                   # 整數 integer
+myWeight = 75.2                # 數值 numeric
+isAsian = TRUE                 # 邏輯 Boolin
+myName = "Tony Chuo"           # 字串 character 
+date1 = as.Date("2019-01-01")  # 日期 Date
+```
+
+<br><hr>
+###【C】基本資料結構 - 向量 Vector
+
+<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+向量是R的基本資料結構<br>
+&emsp; &emsp; ※ `noTime`、`myWeight`、`isAsian`、`myName`、`date1`
+其實都是**長度為1**的向量物件<br>
+
+**(基本值的)向量物件**
+```{r}
+noBuy = c(3L, 5L, 1L, 1L, 3L)               # 整數向量
+height = c(175, 168, 180, 181, 169)         # 數值向量
+isMale = c(FALSE, TRUE, FALSE, TRUE, TRUE)  # 邏輯向量
+```
+
+**字串向量**
+```{r}
+name = c("Amy", "Bob", "Cindy", "Danny", "Edward")  
+```
+
+**類別向量**
+```{r}
+gender = factor( c("F", "M", "F", "M", "M") )     
+skin_color = factor( c("black", "black", "white", "yellow", "white") )
+```
+
+<br><hr>
+###【D】向量索引 Vector Index
+
+<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+向量的索引本身也是(整數或邏輯)向量<br>
+
+**整數向量索引**
+```{r}
+noBuy[c(1, 5)]
+height[2:4]
+```
+
+```{r}
+i = c(1:3, 5)
+isMale[i]
+```
+
+**邏輯向量索引**
+```{r}
+noBuy[c(T,T,F,F,T)]
+height[c(T,T,F,F,T)]
+i = c(T,T,F,F,T)
+isMale[i]
+```
+
+<br><span style="font-size:24px">`r emo::ji("moai")`:</span> 
+什麼時候我們會用邏輯向量做索引呢？<br>
+
+使用邏輯運算式的結果當索引：列出所有女生的名字
+```{r}
+name[gender == "F"]
+```
+
+
+<p class="qiz">
+<span style="font-size:24px">`r emo::ji("memo")` 練習：</span><br>
+請列出 ...<br>
+&emsp; ■ 所有男生的名字<br>
+&emsp; ■ 身高大於180cm的人的名字<br>
+&emsp; ■ 身高大於180cm的黃種人的名字<br>
+請算出 ...<br>
+&emsp; ■ 男生的平均身高<br>
+&emsp; ■ 女生總共買了多少次<br>
+&emsp; ■ 白種女生總共有多少人<br>
+</p class="qiz">
+
+<br><hr>
+###【E】運算符號 (Operator)
+
+<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+早期的R，其最主要的目的就是要簡化向量運算<br>
+&emsp; &emsp; ※ 四則運算和內建功能大多都可以直接作用在向量上面<br>
+
+```{r}
+c(1, 2, 3, 4) * c(1, 10, 100, 1000)
+```
+
+連續的整數 
+```{r}
+1:6
+```
+
+次方運算和科學記號
+```{r}
+10^(-2:3)
+```
+
+當向量不一樣長時 ...
+```{r}
+c(100, 200, 300, 400) / c(10, 20)
+```
+
+單值：長度為1的向量
+```{r}
+c(100, 200, 300, 400) / 10
+```
+
+```{r}
+c(10,20,30,40,50,60,70,80) + c(1, 2, 3)
+```
+
+指定物件的名稱： `=` 和 `<-` Assignment Operator
+```{r}
+Prob = c(0.1, 0.2, 0.3, 0.4)
+Value = c(120, 100, -50, -60)
+Prob * Value
+```
+
+<br><hr>
+###【F】功能與參數 Function & Argument
+The Expected Payoff is： $\sum p \times v$
+```{r}
+expPayoff = sum(Prob * Value)
+expPayoff
+```
+
+內建功能通常第一個參數都是向量物件
+```{r}
+sqrt(1:9)
+```
+
+<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+R的功能通常都有很多個參數，我們需要注意參數的：<br>
+&emsp; &emsp; ※ 名稱<br>
+&emsp; &emsp; ※ 位置<br>
+&emsp; &emsp; ※ 預設值<br>
+
+
+```{r}
+log(1000)
+```
+
+```{r eval=F}
+help(log)
+```
+
+```{r}
+log(x=1000, base=10)
+```
+
+```{r}
+log(1000,10)
+```
+
+**連續呼叫功能**
+```{r}
+round(sqrt(1:9), 3)
+```
+
+**管線運算符號：** `%>%`
+```{r}
+sqrt(1:9) %>% round(3) 
+```
+
+<br><hr>
+###【G】資料框 DataFrame
+通常資料框中的每一筆記錄代表一個分析單位，每個欄位值代表分析單位之中的某一種屬性
+```{r}
+df = data.frame(
+  noBuy = c(3L, 5L, 1L, 1L, 3L),
+  height = c(175, 168, 180, 181, 169),
+  isMale = c(FALSE, TRUE, FALSE, TRUE, TRUE),
+  name = c("Amy", "Bob", "Cindy", "Danny", "Edward"),
+  gender = factor( c("F", "M", "F", "M", "M") ),
+  skin_color = factor( c("black", "black", "white", "yellow", "white")),
+  stringsAsFactors=FALSE
+  )
+df
+```
+
+**方便篩選**
+```{r}
+subset(df, isMale & skin_color == "black")
+```
+
+**方便統計**
+```{r}
+mean(df$height)
+```
+
+**分類運算**
+```{r}
+tapply(df$height, df$gender, mean)
+```
+
+<br><hr>
+###【H】資料框索引 DataFrame Indexing
+<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+<br>
+
+資料框有非常多種索引方式，光是靠這一些索引方式，就可以做很精緻的探索性資料分析：
+
++ 整數向量索引：`df[c(1,2), c(2,3)]` 
++ 空索引：`df[c(1,2), ]`
++ 邏輯向量索引：`df[df$height < 175 & df$isMale, ]`
++ 字串向量索引：`df[df$height < 175 & df$isMale, "name"]`
++ 單欄位符號(`$`)：`df$name[df$height < 175 & df$isMale]`
++ subset()功能：
+    + `subset(df, height<175 & isMale)`
+    + `subset(df, height<175 & isMale, name)`
+    + `subset(df, height<175 & isMale)$name`
+    + `subset(df, height<175 & isMale, c(name, noBuy))`
+
+```{r}
+df[c(1,2), c(2,3)]
+df[c(1,2), ]
+df[df$height < 175 & df$isMale, ]
+df[df$height < 175 & df$isMale, "name"]
+df$name[df$height < 175 & df$isMale]
+
+subset(df, height<175 & isMale)
+subset(df, height<175 & isMale, name)
+subset(df, height<175 & isMale)$name
+subset(df, height<175 & isMale, c(name, noBuy))
+```
+
+<br><p class="qiz">
+<span style="font-size:24px">`r emo::ji("memo")` 練習：</span><br>
+以下的運算式分別代表什麼意思 ...<br>
+&emsp; ■ `df$name[df$isMale]`<br>
+&emsp; ■ `df[df$height > 180 , "name"]`<br>
+&emsp; ■ `subset(df, height > 170 & !isMale)$name`<br>
+&emsp; ■ `mean(df$height[df$isMale])`<br>
+&emsp; ■ `df$height[!df$isMale] %>% mean`<br>
+&emsp; ■ `sum( subset(df, !isMale)$noBuy )`<br>
+&emsp; ■ `subset(df, skin_color == "white" & !isMale ) %>% nrow`<br>
+&emsp; ■ `sum(df$skin_color == "white" & !df$isMale )`<br>
+</p class="qiz"><br>
+
+```{r}
+df$name[df$isMale]
+```
+
+```{r}
+df[df$height > 180 , "name"]
+```
+
+```{r}
+subset(df, height > 170 & !isMale)$name
+```
+
+```{r}
+mean(df$height[df$isMale])
+```
+
+```{r}
+df$height[!df$isMale] %>% mean
+```
+
+```{r}
+sum( subset(df, !isMale)$noBuy )
+```
+
+```{r}
+subset(df, skin_color == "white" & !isMale ) %>% nrow
+```
+
+```{r}
+sum(df$skin_color == "white" & !df$isMale )
+```
+
+<br><br><br><hr>
+
