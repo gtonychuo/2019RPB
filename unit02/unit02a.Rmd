@@ -9,26 +9,22 @@ output:
     css: style.css
 ---
 
-<br><hr>
-基本的程式筆記設定
+<hr>
+基本的程式筆記設定，安裝、載入一些基本的套件
 ```{r results='hide', message=FALSE, warning=FALSE}
 rm(list=ls(all=T))
 knitr::opts_chunk$set(comment = NA)
 knitr::opts_knit$set(global.par = TRUE)
 par(cex=0.8)
 options(scipen=20, digits=4, width=90)
-```
-
-安裝、載入一些基本的套件
-```{r results='hide', message=FALSE, warning=FALSE}
-if(!require(devtools)) install.packages("devtools")
-if(!require(devtools)) devtools::install_github("hadley/emo")
+#
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(magrittr)
 ```
-以上這些程式碼請大家不要去改動
+以上這些程式碼請大家不要去改動<br>
 
-<br><hr>
+- - -
+
 ###【A】一個最簡單的R程式
 
 Given a strategy which may lead to $n$ different outcomes ...
@@ -70,7 +66,7 @@ date1 = as.Date("2019-01-01")  # 日期 Date
 <br><hr>
 ###【C】基本資料結構 - 向量 Vector
 
-<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+<span style="font-size:24px">`r "\U1F4A1"`:</span> 
 向量是R的基本資料結構<br>
 &emsp; &emsp; ※ `noTime`、`myWeight`、`isAsian`、`myName`、`date1`
 其實都是**長度為1**的向量物件<br>
@@ -95,8 +91,7 @@ skin_color = factor( c("black", "black", "white", "yellow", "white") )
 
 <br><hr>
 ###【D】向量索引 Vector Index
-
-<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+<span style="font-size:24px">`r "\U1F4A1"`:</span> 
 向量的索引本身也是(整數或邏輯)向量<br>
 
 **整數向量索引**
@@ -118,17 +113,17 @@ i = c(T,T,F,F,T)
 isMale[i]
 ```
 
-<br><span style="font-size:24px">`r emo::ji("moai")`:</span> 
+<br><span style="font-size:24px">`r "\U1F5FF"`:</span> 
 什麼時候我們會用邏輯向量做索引呢？<br>
 
 使用邏輯運算式的結果當索引：列出所有女生的名字
 ```{r}
-name[gender == "F"]
+name[height > 170]
 ```
 
 
 <p class="qiz">
-<span style="font-size:24px">`r emo::ji("memo")` 練習：</span><br>
+<span style="font-size:24px">`r "\U1F4DD"` 練習：</span><br>
 請列出 ...<br>
 &emsp; ■ 所有男生的名字<br>
 &emsp; ■ 身高大於180cm的人的名字<br>
@@ -139,10 +134,14 @@ name[gender == "F"]
 &emsp; ■ 白種女生總共有多少人<br>
 </p class="qiz">
 
+```{r}
+sum(noBuy[!isMale])
+```
+
 <br><hr>
 ###【E】運算符號 (Operator)
 
-<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+<span style="font-size:24px">`r "\U1F4A1"`:</span> 
 早期的R，其最主要的目的就是要簡化向量運算<br>
 &emsp; &emsp; ※ 四則運算和內建功能大多都可以直接作用在向量上面<br>
 
@@ -181,6 +180,7 @@ Value = c(120, 100, -50, -60)
 Prob * Value
 ```
 
+
 <br><hr>
 ###【F】功能與參數 Function & Argument
 The Expected Payoff is： $\sum p \times v$
@@ -194,7 +194,7 @@ expPayoff
 sqrt(1:9)
 ```
 
-<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+<span style="font-size:24px">`r "\U1F4A1"`:</span> 
 R的功能通常都有很多個參數，我們需要注意參數的：<br>
 &emsp; &emsp; ※ 名稱<br>
 &emsp; &emsp; ※ 位置<br>
@@ -202,7 +202,7 @@ R的功能通常都有很多個參數，我們需要注意參數的：<br>
 
 
 ```{r}
-log(1000)
+log(100, base=10)
 ```
 
 ```{r eval=F}
@@ -219,12 +219,12 @@ log(1000,10)
 
 **連續呼叫功能**
 ```{r}
-round(sqrt(1:9), 3)
+round(sqrt(1:9), 2)
 ```
 
 **管線運算符號：** `%>%`
 ```{r}
-sqrt(1:9) %>% round(3) 
+sqrt(1:9) %>% round(2)
 ```
 
 <br><hr>
@@ -260,7 +260,7 @@ tapply(df$height, df$gender, mean)
 
 <br><hr>
 ###【H】資料框索引 DataFrame Indexing
-<span style="font-size:24px">`r emo::ji("light_bulb")`:</span> 
+<span style="font-size:24px">`r "\U1F4A1"`:</span> 
 <br>
 
 資料框有非常多種索引方式，光是靠這一些索引方式，就可以做很精緻的探索性資料分析：
@@ -290,7 +290,7 @@ subset(df, height<175 & isMale, c(name, noBuy))
 ```
 
 <br><p class="qiz">
-<span style="font-size:24px">`r emo::ji("memo")` 練習：</span><br>
+<span style="font-size:24px">`r "\U1F4DD"` 練習：</span><br>
 以下的運算式分別代表什麼意思 ...<br>
 &emsp; ■ `df$name[df$isMale]`<br>
 &emsp; ■ `df[df$height > 180 , "name"]`<br>
@@ -305,10 +305,13 @@ subset(df, height<175 & isMale, c(name, noBuy))
 ```{r}
 df$name[df$isMale]
 ```
+the names of males
+
 
 ```{r}
 df[df$height > 180 , "name"]
 ```
+
 
 ```{r}
 subset(df, height > 170 & !isMale)$name
@@ -325,6 +328,8 @@ df$height[!df$isMale] %>% mean
 ```{r}
 sum( subset(df, !isMale)$noBuy )
 ```
+total number of buys of females
+
 
 ```{r}
 subset(df, skin_color == "white" & !isMale ) %>% nrow

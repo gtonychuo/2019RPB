@@ -9,24 +9,19 @@ output:
     css: style.css
 ---
 
-<br><hr>
-
-基本的程式筆記設定
+<hr>
+基本的程式筆記設定，安裝、載入一些基本的套件
 ```{r results='hide', message=FALSE, warning=FALSE}
 rm(list=ls(all=T))
 knitr::opts_chunk$set(comment = NA)
 knitr::opts_knit$set(global.par = TRUE)
 par(cex=0.8)
 options(scipen=20, digits=4, width=90)
-```
-
-安裝、載入一些基本的套件
-```{r results='hide', message=FALSE, warning=FALSE}
-if(!require(devtools)) install.packages("devtools")
-if(!require(devtools)) devtools::install_github("hadley/emo")
+#
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(dplyr)
 ```
+以上這些程式碼請大家不要去改動<br>
 
 - - -
 

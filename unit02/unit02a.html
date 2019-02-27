@@ -147,27 +147,23 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">第二單元：R語言簡介</h1>
 <h4 class="author"><em>中山大學管理學院 卓雍然</em></h4>
-<h4 class="date"><em>2019-02-27 09:22:41</em></h4>
+<h4 class="date"><em>2019-02-27 21:16:27</em></h4>
 
 </div>
 
 
-<br>
 <hr>
-<p>基本的程式筆記設定</p>
+<p>基本的程式筆記設定，安裝、載入一些基本的套件</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>(<span class="dt">all=</span>T))
 knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">comment =</span> <span class="ot">NA</span>)
 knitr<span class="op">::</span>opts_knit<span class="op">$</span><span class="kw">set</span>(<span class="dt">global.par =</span> <span class="ot">TRUE</span>)
 <span class="kw">par</span>(<span class="dt">cex=</span><span class="fl">0.8</span>)
-<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">20</span>, <span class="dt">digits=</span><span class="dv">4</span>, <span class="dt">width=</span><span class="dv">90</span>)</code></pre></div>
-<p>安裝、載入一些基本的套件</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) <span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
-<span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;hadley/emo&quot;</span>)
+<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">20</span>, <span class="dt">digits=</span><span class="dv">4</span>, <span class="dt">width=</span><span class="dv">90</span>)
+<span class="co">#</span>
 <span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(pacman)) <span class="kw">install.packages</span>(<span class="st">&quot;pacman&quot;</span>)
 pacman<span class="op">::</span><span class="kw">p_load</span>(magrittr)</code></pre></div>
-<p>以上這些程式碼請大家不要去改動</p>
-<br>
-<hr>
+<p>以上這些程式碼請大家不要去改動<br></p>
+<hr />
 <div id="ar" class="section level3">
 <h3>【A】一個最簡單的R程式</h3>
 <p>Given a strategy which may lead to <span class="math inline">\(n\)</span> different outcomes …</p>
@@ -234,11 +230,13 @@ isMale[i]</code></pre></div>
 <pre><code>[1] FALSE  TRUE  TRUE</code></pre>
 <p><br><span style="font-size:24px">🗿:</span> 什麼時候我們會用邏輯向量做索引呢？<br></p>
 <p>使用邏輯運算式的結果當索引：列出所有女生的名字</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">name[gender <span class="op">==</span><span class="st"> &quot;F&quot;</span>]</code></pre></div>
-<pre><code>[1] &quot;Amy&quot;   &quot;Cindy&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">name[height <span class="op">&gt;</span><span class="st"> </span><span class="dv">170</span>]</code></pre></div>
+<pre><code>[1] &quot;Amy&quot;   &quot;Cindy&quot; &quot;Danny&quot;</code></pre>
 <p class="qiz">
 <span style="font-size:24px">📝 練習：</span><br> 請列出 …<br>   ■ 所有男生的名字<br>   ■ 身高大於180cm的人的名字<br>   ■ 身高大於180cm的黃種人的名字<br> 請算出 …<br>   ■ 男生的平均身高<br>   ■ 女生總共買了多少次<br>   ■ 白種女生總共有多少人<br>
 </p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(noBuy[<span class="op">!</span>isMale])</code></pre></div>
+<pre><code>[1] 4</code></pre>
 <br>
 <hr>
 </div>
@@ -281,19 +279,19 @@ expPayoff</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sqrt</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">9</span>)</code></pre></div>
 <pre><code>[1] 1.000 1.414 1.732 2.000 2.236 2.449 2.646 2.828 3.000</code></pre>
 <p><span style="font-size:24px">💡:</span> R的功能通常都有很多個參數，我們需要注意參數的：<br>     ※ 名稱<br>     ※ 位置<br>     ※ 預設值<br></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">log</span>(<span class="dv">1000</span>)</code></pre></div>
-<pre><code>[1] 6.908</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">log</span>(<span class="dv">100</span>, <span class="dt">base=</span><span class="dv">10</span>)</code></pre></div>
+<pre><code>[1] 2</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">help</span>(log)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">log</span>(<span class="dt">x=</span><span class="dv">1000</span>, <span class="dt">base=</span><span class="dv">10</span>)</code></pre></div>
 <pre><code>[1] 3</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">log</span>(<span class="dv">1000</span>,<span class="dv">10</span>)</code></pre></div>
 <pre><code>[1] 3</code></pre>
 <p><strong>連續呼叫功能</strong></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">sqrt</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">9</span>), <span class="dv">3</span>)</code></pre></div>
-<pre><code>[1] 1.000 1.414 1.732 2.000 2.236 2.449 2.646 2.828 3.000</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">sqrt</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">9</span>), <span class="dv">2</span>)</code></pre></div>
+<pre><code>[1] 1.00 1.41 1.73 2.00 2.24 2.45 2.65 2.83 3.00</code></pre>
 <p><strong>管線運算符號：</strong> <code>%&gt;%</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sqrt</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">9</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">3</span>) </code></pre></div>
-<pre><code>[1] 1.000 1.414 1.732 2.000 2.236 2.449 2.646 2.828 3.000</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sqrt</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">9</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>)</code></pre></div>
+<pre><code>[1] 1.00 1.41 1.73 2.00 2.24 2.45 2.65 2.83 3.00</code></pre>
 <br>
 <hr>
 </div>
@@ -385,6 +383,7 @@ df</code></pre></div>
 <p><br></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df<span class="op">$</span>name[df<span class="op">$</span>isMale]</code></pre></div>
 <pre><code>[1] &quot;Bob&quot;    &quot;Danny&quot;  &quot;Edward&quot;</code></pre>
+<p>the names of males</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df[df<span class="op">$</span>height <span class="op">&gt;</span><span class="st"> </span><span class="dv">180</span> , <span class="st">&quot;name&quot;</span>]</code></pre></div>
 <pre><code>[1] &quot;Danny&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">subset</span>(df, height <span class="op">&gt;</span><span class="st"> </span><span class="dv">170</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>isMale)<span class="op">$</span>name</code></pre></div>
@@ -395,6 +394,7 @@ df</code></pre></div>
 <pre><code>[1] 177.5</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>( <span class="kw">subset</span>(df, <span class="op">!</span>isMale)<span class="op">$</span>noBuy )</code></pre></div>
 <pre><code>[1] 4</code></pre>
+<p>total number of buys of females</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">subset</span>(df, skin_color <span class="op">==</span><span class="st"> &quot;white&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>isMale ) <span class="op">%&gt;%</span><span class="st"> </span>nrow</code></pre></div>
 <pre><code>[1] 1</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(df<span class="op">$</span>skin_color <span class="op">==</span><span class="st"> &quot;white&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>df<span class="op">$</span>isMale )</code></pre></div>

@@ -147,27 +147,23 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">第二單元：資料檢視與繪圖</h1>
 <h4 class="author"><em>中山大學管理學院 卓雍然</em></h4>
-<h4 class="date"><em>2019-02-27 09:23:48</em></h4>
+<h4 class="date"><em>2019-02-27 21:16:47</em></h4>
 
 </div>
 
 
-<br>
 <hr>
-<p>基本的程式筆記設定</p>
+<p>基本的程式筆記設定，安裝、載入一些基本的套件</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>(<span class="dt">all=</span>T))
 knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">comment =</span> <span class="ot">NA</span>)
 knitr<span class="op">::</span>opts_knit<span class="op">$</span><span class="kw">set</span>(<span class="dt">global.par =</span> <span class="ot">TRUE</span>)
 <span class="kw">par</span>(<span class="dt">cex=</span><span class="fl">0.8</span>)
-<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">20</span>, <span class="dt">digits=</span><span class="dv">4</span>, <span class="dt">width=</span><span class="dv">90</span>)</code></pre></div>
-<p>安裝、載入一些基本的套件</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) <span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
-<span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;hadley/emo&quot;</span>)
+<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">20</span>, <span class="dt">digits=</span><span class="dv">4</span>, <span class="dt">width=</span><span class="dv">90</span>)
+<span class="co">#</span>
 <span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(pacman)) <span class="kw">install.packages</span>(<span class="st">&quot;pacman&quot;</span>)
 pacman<span class="op">::</span><span class="kw">p_load</span>(magrittr)</code></pre></div>
-<p>以上這些程式碼請大家不要去改動</p>
-<br>
-<hr>
+<p>以上這些程式碼請大家不要去改動<br></p>
+<hr />
 <div id="case-1-who-dataset" class="section level3">
 <h3>【CASE 1】世界衛生組織資料集 WHO Dataset</h3>
 <div id="-loading-data" class="section level5">
