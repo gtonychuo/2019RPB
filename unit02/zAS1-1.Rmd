@@ -6,7 +6,7 @@ output:
   html_document:
     highlight: pygments
     theme: flatly
-    css: ../style.css
+    css: style.css
 ---
 
 <br><hr>
