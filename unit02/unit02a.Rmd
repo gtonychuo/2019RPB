@@ -134,9 +134,37 @@ name[height > 170]
 &emsp; ■ 白種女生總共有多少人<br>
 </p class="qiz">
 
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+所有男生的名字
 ```{r}
-sum(noBuy[!isMale])
+name[isMale]
 ```
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+身高大於180cm的人的名字
+```{r}
+name[height > 180]
+```
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+身高大於180cm的黃種人的名字
+```{r}
+name[height > 180 & skin_color == "yellow"]
+```
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+男生的平均身高
+```{r}
+mean(height[isMale])
+```
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+女生總共買了多少次
+```{r}
+sum(noBuy[isMale])
+```
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+白種女生總共有多少人
+```{r}
+sum(skin_color == "white" & !isMale)
+```
+
 
 <br><hr>
 ###【E】運算符號 (Operator)
@@ -300,41 +328,52 @@ subset(df, height<175 & isMale, c(name, noBuy))
 &emsp; ■ `sum( subset(df, !isMale)$noBuy )`<br>
 &emsp; ■ `subset(df, skin_color == "white" & !isMale ) %>% nrow`<br>
 &emsp; ■ `sum(df$skin_color == "white" & !df$isMale )`<br>
-</p class="qiz"><br>
+</p class="qiz">
 
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+所有男生的名字
 ```{r}
 df$name[df$isMale]
 ```
-the names of males
 
-
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+身高高於180cm的人的名字
 ```{r}
 df[df$height > 180 , "name"]
 ```
 
-
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+身高高於170cm的女生的名字
 ```{r}
 subset(df, height > 170 & !isMale)$name
 ```
 
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+男生的平均身高
 ```{r}
 mean(df$height[df$isMale])
 ```
 
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+女生的平均身高
 ```{r}
 df$height[!df$isMale] %>% mean
 ```
 
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+女生的總購買次數
 ```{r}
 sum( subset(df, !isMale)$noBuy )
 ```
-total number of buys of females
 
-
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+白種女生的人數
 ```{r}
 subset(df, skin_color == "white" & !isMale ) %>% nrow
 ```
 
+<span style="font-size:24px">`r "\U1F4CB"`</span>:
+白種女生的人數
 ```{r}
 sum(df$skin_color == "white" & !df$isMale )
 ```

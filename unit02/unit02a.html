@@ -147,7 +147,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">第二單元：R語言簡介</h1>
 <h4 class="author"><em>中山大學管理學院 卓雍然</em></h4>
-<h4 class="date"><em>2019-02-27 21:16:27</em></h4>
+<h4 class="date"><em>2019-03-02 00:03:25</em></h4>
 
 </div>
 
@@ -235,8 +235,24 @@ isMale[i]</code></pre></div>
 <p class="qiz">
 <span style="font-size:24px">📝 練習：</span><br> 請列出 …<br>   ■ 所有男生的名字<br>   ■ 身高大於180cm的人的名字<br>   ■ 身高大於180cm的黃種人的名字<br> 請算出 …<br>   ■ 男生的平均身高<br>   ■ 女生總共買了多少次<br>   ■ 白種女生總共有多少人<br>
 </p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(noBuy[<span class="op">!</span>isMale])</code></pre></div>
-<pre><code>[1] 4</code></pre>
+<p><span style="font-size:24px">📋</span>: 所有男生的名字</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">name[isMale]</code></pre></div>
+<pre><code>[1] &quot;Bob&quot;    &quot;Danny&quot;  &quot;Edward&quot;</code></pre>
+<p><span style="font-size:24px">📋</span>: 身高大於180cm的人的名字</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">name[height <span class="op">&gt;</span><span class="st"> </span><span class="dv">180</span>]</code></pre></div>
+<pre><code>[1] &quot;Danny&quot;</code></pre>
+<p><span style="font-size:24px">📋</span>: 身高大於180cm的黃種人的名字</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">name[height <span class="op">&gt;</span><span class="st"> </span><span class="dv">180</span> <span class="op">&amp;</span><span class="st"> </span>skin_color <span class="op">==</span><span class="st"> &quot;yellow&quot;</span>]</code></pre></div>
+<pre><code>[1] &quot;Danny&quot;</code></pre>
+<p><span style="font-size:24px">📋</span>: 男生的平均身高</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(height[isMale])</code></pre></div>
+<pre><code>[1] 172.7</code></pre>
+<p><span style="font-size:24px">📋</span>: 女生總共買了多少次</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(noBuy[isMale])</code></pre></div>
+<pre><code>[1] 9</code></pre>
+<p><span style="font-size:24px">📋</span>: 白種女生總共有多少人</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(skin_color <span class="op">==</span><span class="st"> &quot;white&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>isMale)</code></pre></div>
+<pre><code>[1] 1</code></pre>
 <br>
 <hr>
 </div>
@@ -380,23 +396,28 @@ df</code></pre></div>
 <p class="qiz">
 <span style="font-size:24px">📝 練習：</span><br> 以下的運算式分別代表什麼意思 …<br>   ■ <code>df$name[df$isMale]</code><br>   ■ <code>df[df$height &gt; 180 , &quot;name&quot;]</code><br>   ■ <code>subset(df, height &gt; 170 &amp; !isMale)$name</code><br>   ■ <code>mean(df$height[df$isMale])</code><br>   ■ <code>df$height[!df$isMale] %&gt;% mean</code><br>   ■ <code>sum( subset(df, !isMale)$noBuy )</code><br>   ■ <code>subset(df, skin_color == &quot;white&quot; &amp; !isMale ) %&gt;% nrow</code><br>   ■ <code>sum(df$skin_color == &quot;white&quot; &amp; !df$isMale )</code><br>
 </p>
-<p><br></p>
+<p><span style="font-size:24px">📋</span>: 所有男生的名字</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df<span class="op">$</span>name[df<span class="op">$</span>isMale]</code></pre></div>
 <pre><code>[1] &quot;Bob&quot;    &quot;Danny&quot;  &quot;Edward&quot;</code></pre>
-<p>the names of males</p>
+<p><span style="font-size:24px">📋</span>: 身高高於180cm的人的名字</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df[df<span class="op">$</span>height <span class="op">&gt;</span><span class="st"> </span><span class="dv">180</span> , <span class="st">&quot;name&quot;</span>]</code></pre></div>
 <pre><code>[1] &quot;Danny&quot;</code></pre>
+<p><span style="font-size:24px">📋</span>: 身高高於170cm的女生的名字</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">subset</span>(df, height <span class="op">&gt;</span><span class="st"> </span><span class="dv">170</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>isMale)<span class="op">$</span>name</code></pre></div>
 <pre><code>[1] &quot;Amy&quot;   &quot;Cindy&quot;</code></pre>
+<p><span style="font-size:24px">📋</span>: 男生的平均身高</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(df<span class="op">$</span>height[df<span class="op">$</span>isMale])</code></pre></div>
 <pre><code>[1] 172.7</code></pre>
+<p><span style="font-size:24px">📋</span>: 女生的平均身高</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df<span class="op">$</span>height[<span class="op">!</span>df<span class="op">$</span>isMale] <span class="op">%&gt;%</span><span class="st"> </span>mean</code></pre></div>
 <pre><code>[1] 177.5</code></pre>
+<p><span style="font-size:24px">📋</span>: 女生的總購買次數</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>( <span class="kw">subset</span>(df, <span class="op">!</span>isMale)<span class="op">$</span>noBuy )</code></pre></div>
 <pre><code>[1] 4</code></pre>
-<p>total number of buys of females</p>
+<p><span style="font-size:24px">📋</span>: 白種女生的人數</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">subset</span>(df, skin_color <span class="op">==</span><span class="st"> &quot;white&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>isMale ) <span class="op">%&gt;%</span><span class="st"> </span>nrow</code></pre></div>
 <pre><code>[1] 1</code></pre>
+<p><span style="font-size:24px">📋</span>: 白種女生的人數</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(df<span class="op">$</span>skin_color <span class="op">==</span><span class="st"> &quot;white&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>df<span class="op">$</span>isMale )</code></pre></div>
 <pre><code>[1] 1</code></pre>
 <br><br><br>
