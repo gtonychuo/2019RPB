@@ -16,8 +16,13 @@
 
 <hr>
 
+<<<<<<< HEAD
 * [第三單元：(A)資料檢視與繪圖](https://gtonychuo.github.io/2019RPB/unit03/unit03a.html)
 * [第三單元：(B)數位偵探](https://gtonychuo.github.io/2019RPB/unit03/unit03b.html)
+=======
+* [第三單元：(A)資料檢視與繪圖](https://gtonychuo.github.io/2019RPB/unit02/unit03a.html)
+* [第三單元：(B)數位偵探](https://gtonychuo.github.io/2019RPB/unit02/unit03b.html)
+>>>>>>> a9b0377b1d6097c3df4b51334af79a1ff46cd354
 
 <hr>
 
