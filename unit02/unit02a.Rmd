@@ -9,24 +9,20 @@ output:
     css: style.css
 ---
 
-<hr>
-基本的程式筆記設定，安裝、載入一些基本的套件
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這個區段主要是設定筆記網頁的格式和載入(安裝)一些基本的套件，請大家不要改動
 rm(list=ls(all=T))
 knitr::opts_chunk$set(comment = NA)
 knitr::opts_knit$set(global.par = TRUE)
 par(cex=0.8)
 options(scipen=20, digits=4, width=90)
-#
+
 if(!require(pacman)) install.packages("pacman")
 pacman::p_load(magrittr)
 ```
-以上這些程式碼請大家不要去改動<br>
-
-- - -
+<hr>
 
 ###【A】一個最簡單的R程式
-
 Given a strategy which may lead to $n$ different outcomes ...
 
 + $p_i$ : the probability of the $i$-th outcome, $i \in [1, n]$
