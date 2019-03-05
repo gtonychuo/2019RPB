@@ -147,20 +147,11 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">AS3-3: 美國的人口統計和就業資料</h1>
 <h4 class="author"><em>第 0 組</em></h4>
-<h4 class="date"><em>2019-03-05 21:38:52</em></h4>
+<h4 class="date"><em>2019-03-05 22:01:34</em></h4>
 
 </div>
 
 
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動&lt;br&gt;</span>
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>(<span class="dt">all=</span>T))
-knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">comment =</span> <span class="ot">NA</span>)
-knitr<span class="op">::</span>opts_knit<span class="op">$</span><span class="kw">set</span>(<span class="dt">global.par =</span> <span class="ot">TRUE</span>)
-<span class="kw">par</span>(<span class="dt">cex=</span><span class="fl">0.8</span>)
-<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">20</span>, <span class="dt">digits=</span><span class="dv">4</span>, <span class="dt">width=</span><span class="dv">90</span>)
-<span class="co">#</span>
-<span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(pacman)) <span class="kw">install.packages</span>(<span class="st">&quot;pacman&quot;</span>)
-pacman<span class="op">::</span><span class="kw">p_load</span>(dplyr)</code></pre></div>
 <hr>
 <p>就業統計數據是政策制定者用來衡量經濟整體實力的最重要指標之一。在美國，政府使用現有人口調查（CPS）衡量失業率，該調查每月收集來自各種美國人的人口統計和就業信息。在本練習中，我們將使用講座中審查的主題以及一些使用2013年9月版的，具有全國代表性的數據集。數據集中的觀察結果代表2013年9月CPS中實際完成調查的人員，完整數據集有385個欄位，但在本練習中，我們將使用數據集CPSData.csv版本，它具有以下欄位：</p>
 <ul>

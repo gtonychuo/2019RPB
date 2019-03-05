@@ -147,20 +147,11 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">AS3-2: 股市動態</h1>
 <h4 class="author"><em>第 0 組</em></h4>
-<h4 class="date"><em>2019-03-05 21:38:28</em></h4>
+<h4 class="date"><em>2019-03-05 22:01:46</em></h4>
 
 </div>
 
 
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動&lt;br&gt;</span>
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>(<span class="dt">all=</span>T))
-knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">comment =</span> <span class="ot">NA</span>)
-knitr<span class="op">::</span>opts_knit<span class="op">$</span><span class="kw">set</span>(<span class="dt">global.par =</span> <span class="ot">TRUE</span>)
-<span class="kw">par</span>(<span class="dt">cex=</span><span class="fl">0.8</span>)
-<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">20</span>, <span class="dt">digits=</span><span class="dv">4</span>, <span class="dt">width=</span><span class="dv">90</span>)
-<span class="co">#</span>
-<span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(pacman)) <span class="kw">install.packages</span>(<span class="st">&quot;pacman&quot;</span>)
-pacman<span class="op">::</span><span class="kw">p_load</span>(dplyr)</code></pre></div>
 <hr>
 <p><strong>股票動態</strong></p>
 <p>股票市場是買賣雙方交易公司股票的地方，也是個人和公司投資的最受歡迎的方式之一。現在估計世界股票市場規模達到數兆。紐約證券交易所位於紐約市，是世界上最大的股票市場。 紐約證券交易所約有2,800家上市公司。在這個問題上，我們將看看其中五家公司的每月股價：IB、通用電氣（GE）、寶潔、可口可樂和波音。此問題中使用的數據來自Infochimps。</p>

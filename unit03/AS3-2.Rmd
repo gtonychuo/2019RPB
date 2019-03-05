@@ -9,7 +9,7 @@ output:
     css: style.css
 ---
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 # 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
 rm(list=ls(all=T))
 knitr::opts_chunk$set(comment = NA)
