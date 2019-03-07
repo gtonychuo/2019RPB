@@ -84,7 +84,7 @@ mean(D$Arrest)
 
 【1.6】 How many observations have a LocationDescription value of ALLEY?
 ```{r}
-sum(D$LocationDescription == "ALLEY")
+mean(D$LocationDescription == "ALLEY")
 ```
 
 
@@ -107,19 +107,30 @@ head(D$Date)  # Month/Day/Year Hour:Minute
 
 ```{r}
 ts = as.POSIXct(D$Date, format="%m/%d/%y %H:%M")
-par(cex=0.7)
-hist(ts,"year",las=2,freq=T,xlab="")
 ```
 
 ```{r}
-table(format(ts,'%w'))
+par(cex=0.7)
+hist(ts,"quarter",las=2,freq=T,xlab="")
+```
+
+```{r}
+table( format(ts,'%u') )
+```
+
+```{r}
 table(format(ts,'%m'))
-table(weekday=format(ts,'%w'), month=format(ts,'%m'))
+```
+
+```{r}
+table(weekday=format(ts,'%u'), month=format(ts,'%m'))
+```
+
+```{r}
+table(weekday=format(ts,'%u'), hour=format(ts,'%H'))
 ```
 
 ```{r fig.height=2.5, fig.width=8}
-# library(dplyr)
-# library(d3heatmap)
 table(format(ts,"%u"), format(ts,"%H")) %>% 
   as.data.frame.matrix %>% 
   d3heatmap(F,F,col=colorRamp(c('seagreen','lightyellow','red')))
@@ -179,10 +190,17 @@ tapply(D$Arrest, format(ts,'%Y'), mean) %>% round(3) # 0.085
 ```{r}
 # 0.039
 ```
+<br>
 
-<br><br>
+<span style="font-size:24px">`r "\U1F5FF"`</span>:
+汽車竊案有季節性嗎? 哪一個季節有比較多(少)的竊案呢？
+```{r}
+#
+#
+```
 
-- - -
+<br><br><hr>
+
 
 ### Section-4 Popular Locations
 
@@ -193,6 +211,9 @@ table(D$LocationDescription) %>% sort %>% tail(6)
 ```
 
 【4.2】 How many observations are in Top5?
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>:
+除了向量本身的名字之外，每一個向量元件也可以有名字
 ```{r}
 (top5 = names(table(D$LocationDescription) %>% sort %>% tail(6))[-4])
 
@@ -216,7 +237,7 @@ ts[D$Location == "DRIVEWAY - RESIDENTIAL"] %>%
   format('%w') %>% table %>% sort
 ```
 
-
+<br><br><br>
 
 
 

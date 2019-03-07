@@ -147,7 +147,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">第三單元：(A)資料檢視與繪圖</h1>
 <h4 class="author"><em>中山大學管理學院 卓雍然</em></h4>
-<h4 class="date"><em>2019-03-05 22:36:22</em></h4>
+<h4 class="date"><em>2019-03-07 10:30:21</em></h4>
 
 </div>
 
@@ -203,7 +203,7 @@ $(document).ready(function () {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">WHO<span class="op">$</span>Country[<span class="dv">86</span>]</code></pre></div>
 <pre><code>[1] Japan
 194 Levels: Afghanistan Albania Algeria Andorra Angola Antigua and Barbuda ... Zimbabwe</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">WHO<span class="op">$</span>Country[<span class="kw">which.min</span>(WHO<span class="op">$</span>Under15)]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">WHO<span class="op">$</span>Country[ <span class="kw">which.min</span>(WHO<span class="op">$</span>Under15) ]</code></pre></div>
 <pre><code>[1] Japan
 194 Levels: Afghanistan Albania Algeria Andorra Angola Antigua and Barbuda ... Zimbabwe</code></pre>
 <p><strong>15歲以下人口比率最高的國家</strong></p>
@@ -229,6 +229,16 @@ $(document).ready(function () {
 <span class="kw">nrow</span>(Outliers)</code></pre></div>
 <pre><code>[1] 7</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Outliers[<span class="kw">c</span>(<span class="st">&quot;Country&quot;</span>,<span class="st">&quot;GNI&quot;</span>,<span class="st">&quot;FertilityRate&quot;</span>)]</code></pre></div>
+<pre><code>              Country   GNI FertilityRate
+23           Botswana 14550          2.71
+56  Equatorial Guinea 25620          5.04
+63              Gabon 13740          4.18
+83             Israel 27110          2.92
+88         Kazakhstan 11250          2.52
+131            Panama 14510          2.52
+150      Saudi Arabia 24700          2.76</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Outliers[Outliers<span class="op">$</span>GNI<span class="op">&gt;</span><span class="dv">10000</span> <span class="op">&amp;</span><span class="st"> </span>Outliers<span class="op">$</span>FertilityRate <span class="op">&gt;</span><span class="st"> </span><span class="fl">2.5</span>, 
+         <span class="kw">c</span>(<span class="st">&quot;Country&quot;</span>,<span class="st">&quot;GNI&quot;</span>,<span class="st">&quot;FertilityRate&quot;</span>)]</code></pre></div>
 <pre><code>              Country   GNI FertilityRate
 23           Botswana 14550          2.71
 56  Equatorial Guinea 25620          5.04
@@ -284,8 +294,8 @@ $(document).ready(function () {
 <hr>
 </div>
 </div>
-<div id="case-2-who-dataset" class="section level3">
-<h3>【CASE 2】食物成分資料 WHO Dataset</h3>
+<div id="case-2-usda-dataset" class="section level3">
+<h3>【CASE 2】食物成分資料 USDA Dataset</h3>
 <div id="-video2---reading-in-the-dataset" class="section level5">
 <h5>載入、檢視資料 Video2 - Reading in the Dataset</h5>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">USDA =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/USDA.csv&quot;</span>)
@@ -914,17 +924,14 @@ USDA<span class="op">$</span>Sodium[<span class="kw">match</span>(<span class="s
 <div id="-video-5---adding-a-variable" class="section level5">
 <h5>定義新欄位 Video 5 - Adding a variable</h5>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Creating a variable that takes value 1 if the food has higher sodium</span>
-HighSodium =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Sodium <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Sodium, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-
-<span class="co"># Adding the variable to the dataset</span>
-USDA<span class="op">$</span>HighSodium =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Sodium <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Sodium, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-
-<span class="co"># Similarly for HighProtein, HigCarbs, HighFat</span>
-USDA<span class="op">$</span>HighCarbs =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Carbohydrate <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Carbohydrate, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-
-USDA<span class="op">$</span>HighProtein =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Protein <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Protein, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))
-
-USDA<span class="op">$</span>HighFat =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>TotalFat <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>TotalFat, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
+HighSodium =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Sodium <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Sodium, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HighSodium =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Sodium <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Sodium, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Adding the variable to the dataset</span>
+USDA<span class="op">$</span>HighSodium =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Sodium <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Sodium, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Similarly for HighProtein, HigCarbs, HighFat</span>
+USDA<span class="op">$</span>HighCarbs =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Carbohydrate <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Carbohydrate, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">USDA<span class="op">$</span>HighProtein =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>Protein <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>Protein, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">USDA<span class="op">$</span>HighFat =<span class="st"> </span><span class="kw">as.numeric</span>(USDA<span class="op">$</span>TotalFat <span class="op">&gt;</span><span class="st"> </span><span class="kw">mean</span>(USDA<span class="op">$</span>TotalFat, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</code></pre></div>
 <p><br></p>
 </div>
 <div id="-video-6---summary-tables" class="section level5">
@@ -964,6 +971,7 @@ USDA<span class="op">$</span>HighFat =<span class="st"> </span><span class="kw">
 $`1`
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
     0.0     0.0     0.2    16.3     4.5  2400.0      83 </code></pre>
+<p><br><br><br></p>
 </div>
 </div>
 

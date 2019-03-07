@@ -46,7 +46,7 @@ summary(WHO$Under15)
 ```{r}
 which.min(WHO$Under15)
 WHO$Country[86]
-WHO$Country[which.min(WHO$Under15)]
+WHO$Country[ which.min(WHO$Under15) ]
 ```
 
 **15歲以下人口比率最高的國家**
@@ -69,6 +69,12 @@ Outliers = subset(WHO, GNI > 10000 & FertilityRate > 2.5)
 nrow(Outliers)
 Outliers[c("Country","GNI","FertilityRate")]
 ```
+
+```{r}
+Outliers[Outliers$GNI>10000 & Outliers$FertilityRate > 2.5, 
+         c("Country","GNI","FertilityRate")]
+```
+
 <br>
 
 ##### 直方圖 Histogram
@@ -78,6 +84,7 @@ hist(WHO$CellularSubscribers)
 <br>
 
 ##### 盒狀圖 Boxplot
+
 ```{r}
 boxplot(WHO$LifeExpectancy ~ WHO$Region, las=2)
 ```
@@ -97,12 +104,18 @@ table(WHO$Region)
 ##### 分類統計功能 `table()`
 ```{r}
 tapply(WHO$Over60, WHO$Region, mean)
+```
+
+```{r}
 tapply(WHO$LiteracyRate, WHO$Region, min)
+```
+
+```{r}
 tapply(WHO$LiteracyRate, WHO$Region, min, na.rm=TRUE)
 ```
 <br><br><hr>
 
-###【CASE 2】食物成分資料 WHO Dataset
+###【CASE 2】食物成分資料 USDA Dataset
 
 ##### 載入、檢視資料 Video2 - Reading in the Dataset
 ```{r}
@@ -194,15 +207,27 @@ boxplot(USDA$Sugar, ylab = "Sugar (g)", main = "Boxplot of Sugar")
 ```{r}
 # Creating a variable that takes value 1 if the food has higher sodium
 HighSodium = as.numeric(USDA$Sodium > mean(USDA$Sodium, na.rm=TRUE))
+```
 
+```{r}
+HighSodium = as.numeric(USDA$Sodium > mean(USDA$Sodium, na.rm=TRUE))
+```
+
+```{r}
 # Adding the variable to the dataset
 USDA$HighSodium = as.numeric(USDA$Sodium > mean(USDA$Sodium, na.rm=TRUE))
+```
 
+```{r}
 # Similarly for HighProtein, HigCarbs, HighFat
 USDA$HighCarbs = as.numeric(USDA$Carbohydrate > mean(USDA$Carbohydrate, na.rm=TRUE))
+```
 
+```{r}
 USDA$HighProtein = as.numeric(USDA$Protein > mean(USDA$Protein, na.rm=TRUE))
+```
 
+```{r}
 USDA$HighFat = as.numeric(USDA$TotalFat > mean(USDA$TotalFat, na.rm=TRUE))
 ```
 <br>
@@ -248,6 +273,6 @@ tapply(USDA$VitaminC, USDA$HighCarbs, summary, na.rm=TRUE)
 ```
 
 
-
+<br><br><br>
 
 
