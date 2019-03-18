@@ -17,11 +17,11 @@
 <hr>
 
 **第三單元：**
-* [(3A)資料檢視與繪圖](https://gtonychuo.github.io/2019RPB/unit03/unit03a.html)
-* [(3B)數位偵探](https://gtonychuo.github.io/2019RPB/unit03/unit03b.html)
-* [(AS3-1)數位偵探(日期資料)](https://gtonychuo.github.io/2019RPB/unit03/as3ex/AS3-1.html)
-* [(AS3-2)]股價(基本繪圖)](https://gtonychuo.github.io/2019RPB/unit03/as3ex/AS3-2.html)
-* [(AS3-3)人口與就業數據(缺項、表格合併)](https://gtonychuo.github.io/2019RPB/unit03/as3ex/AS3-3.html)
+* (3A)[資料檢視與繪圖](https://gtonychuo.github.io/2019RPB/unit03/unit03a.html)
+* (3B)[數位偵探](https://gtonychuo.github.io/2019RPB/unit03/unit03b.html)
+* (AS3-1)[數位偵探(日期資料)](https://gtonychuo.github.io/2019RPB/unit03/as3ex/AS3-1.html)
+* (AS3-2)[股價圖(基本繪圖)](https://gtonychuo.github.io/2019RPB/unit03/as3ex/AS3-2.html)
+* (AS3-3)[人口與就業數據(缺項、表格合併)](https://gtonychuo.github.io/2019RPB/unit03/as3ex/AS3-3.html)
 
 <hr>
 
