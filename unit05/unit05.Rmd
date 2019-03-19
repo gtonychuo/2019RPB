@@ -1,5 +1,5 @@
 ---
-title: 第五A單元：機率概論 with R
+title: 第五單元：機率概論 with R
 author: 中山大學管理學院 卓雍然
 date: "`r Sys.time()`"
 output: 
@@ -20,20 +20,20 @@ if(!require(pacman)) install.packages("pacman")
 ```
 <hr>
 
-**單元摘要：**使用R複習並練習操作「機率」的基本觀念
+**學習重點：**使用R複習並練習操作「機率」的基本觀念
 
-* 目標族群: Population
-    + 類別變數
-    + 數值變數
-* 抽樣: `sample()` 
-* 隨機實驗: Random Experiment
+* 目標族群：Target Population
+* 目標變數： Target Variable
+* 樣本 vs. 樣本點 Sample vs. Point
+* 隨機抽樣: sample()
+* 重複實驗: replicate()
 * 隨機變數: Random Variable
-* 重複實驗: `replicate()`
-* 分布 Distribution 
-    + 類別 vs. 數值分布 
-    + 數值 vs. 機率分布
+* 分布 Distribution
+    + 類別 vs. 數值 樣本(向量)
+    + 類別值 vs. 連續值分布  Discrete vs. Continuous
+    + 數量分布 vs. 機率分布 Frequency vs. Density
+    + 實證分布 vs. 理論分布 Empirical vs. Theoretical
     + 抽樣分布: Sampling Distribution
-    + 實證 vs. 理論分布: Emperical/Theoretical Distribution
 
 <br>
 ```{r results='hide', message=FALSE, warning=FALSE}
@@ -77,14 +77,22 @@ hist(Weight, main="體重的分布")
 barplot(table(Skin), main="膚色的分布", xlab="", las=2)
 ```
 
-<span style="font-size:24px">`r "\U1F5FF"`:</span> 
-*直條圖和直方圖有什麼異同？* 
+<p class="qiz">
+<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
+&nbsp; ■ &nbsp; 直條圖和直方圖有什麼異同？<br>
+&nbsp; ■ &nbsp; 「分布」是什麼？<br>
+&nbsp; ■ &nbsp; 類別變數和數值變數的分布有什麼異同？<br>
+</p class="qiz">
 
-<span style="font-size:24px">`r "\U1F5FF"`:</span> 
-*類別變數和數值變數的分布有什麼異同？* <br><br><hr>
+<p class="wwl">
+<span style="font-size:24px">`r "\U1F4A1"` 學習重點：</span><br>
+&nbsp; ■ &nbsp; 分佈一般是指變數可能出現的值所出現的次數<br>
+&nbsp; ■ &nbsp; 類別變數可能出現的值是有限的，所以各分類出現的次數可以清楚的被計算出來<br>
+&nbsp; ■ &nbsp; 連續變數可能出現的值是無限的，所以我們需要指定數值區間，才能夠計算出現次數<br>
+&nbsp; ■ &nbsp; 該數值區間就是直方圖的「欄寬(binwidth)」<br>
+</p class="wwl"><br><hr>
 
-
-### 【B】數值分布和機率密度函數
+### 【B】數量分布和機率密度函數
 如果我們改變直方圖的`binwdith`
 ```{r fig.height=3.2, fig.width=7.2}
 par(mfrow=c(2,3), cex=0.75, mar=c(2,4,3,2))
@@ -121,7 +129,7 @@ for(bw in 1:6) {
 &nbsp; ■ &nbsp; 等比例改變分布函數的高度，讓它下方的面積等於1，它就會變成「機率密度函數」<br>
 &nbsp; ■ &nbsp; 數值分布函數下方的面積代表族群中的數值落在某一區間的次數<br>
 &nbsp; ■ &nbsp; 機率密度函數下方的面積代表族群中的數值會落在某一區間的機率<br>
-</p class="qiz">
+</p class="wwl">
 
 <p class="qiz">
 <span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
@@ -142,7 +150,7 @@ abline(v=seq(0,W,W/10),h=seq(0,1.5,0.1)/W,col='lightgray',lty=3)
 <span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
 &nbsp; ■ &nbsp; 從以上機率密度函數抽出80,000個樣本點，大約有多少點會落在40跟60之間？<br>
 &nbsp; ■ &nbsp; 如果以上機率密度函數的底(support)變為`[0, 1]`，它的最高點會變成多少？<br>
-&nbsp; ■ &nbsp; 如果它的底變為`[0.5, 0.6]`，它的最高點會變成多少？<br>
+&nbsp; ■ &nbsp; 如果它的底變為`[0.95, 1.05]`，它的最高點會變成多少？<br>
 </p class="qiz"><br>
 
 <hr>
