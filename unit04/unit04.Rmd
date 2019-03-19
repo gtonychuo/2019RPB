@@ -1,0 +1,155 @@
+---
+title: 第四單元：資料處理與繪圖套件案例
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
+```
+<hr>
+
+**單元摘要：** 使用第三周作業互評的數據來練習R的
+
+* 資料處理(dplyr)與繪圖套件
+    + `dplyr`
+    + `tidyr`
+* 繪圖套件 
+    + `ggplot2` 
+
+<br>
+(安裝)載入套件
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr, tidyr, ggplot2, ggthemes)
+```
+<hr>
+
+### 【A】The Ascomebe Quartet
+
+[The Ascomebe Quartet](https://en.wikipedia.org/wiki/Anscombe%27s_quartet)完全不同的數據有可能會產生完全相同的統計量，以下我們練習使用R的資料處理(`tidyr`,`dplyr`)和繪圖套件(`ggplot2`)來畫Ascomebe Quartet.
+
+先讀進並檢視資料
+```{r}
+A = read.csv("data/anscombe.csv")
+head(A)
+```
+
+轉換資料排列方式
+```{r}
+A = as.matrix(A)
+A = cbind(
+  rep(1:4, each=11), rep(1:11, 4),
+  rbind(A[,c(2,6)],A[,c(3,7)],A[,c(4,8)],A[,c(5,9)])) %>% 
+  data.frame %>% as.tbl %>% 
+  setNames(c("set","id","x","y"))
+head(A,12)
+```
+
+畫出圖形
+```{r fig.height=5, fig.width=6}
+ggplot(A, aes(x, y)) +                          
+  geom_point(size=2, col='navyblue') +
+  geom_smooth(method="lm", se=F, col="orange", lty=2) +
+  facet_wrap(~set) +
+  theme_wsj()
+```
+<br><br><hr>
+
+### 【B】目的導向的圖形設計
+
+#### FIG1 - 互評進度圖
+![](data/xrating.png)
+
+<p class="qiz">
+<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
+&nbsp; ■ &nbsp; 「互評進度圖」的目的是？<br>
+&nbsp; ■ &nbsp; 我們如何使用圖形來促成這個目的？<br>
+&nbsp; ■ &nbsp; 你覺得這做會有效嗎？ 為甚麼？<br>
+</p class="qiz"><br>
+
+<br><hr>
+### 【C】匿名互評資料探索性分析
+以下資料的人名和小組名稱都已經過匿名化處理：
+
+* xID：評分者ID
+* xGrade：`B`-大學部； `M`-研究所
+* xTeam：評分者組別
+* rTeam：被評組別
+
+```{r}
+load("data/X.rdata")
+str(X)
+```
+
+#### 各組別 評分數量 & 評分數量：
+```{r}
+rbind(table(X$xTeam), table(X$rTeam))
+```
+
+
+#### 轉換資料排列 Data Alignment
+```{r}
+X2 = gather(X, "key", "Score", 5:13) %>% separate(key, c("AS","TYPE"), sep="\\.")
+X2[4:5] = lapply(X2[4:5], factor)
+as.tbl(X2)
+```
+
+#### 所有評分的分布
+```{r fig.height=2.5, fig.width=6}
+par(cex=0.8, mar=c(3,3,3,3))
+table(X2$Score) %>% barplot(main="Dist. Scores")
+```
+
+#### 評分的分布 3作業 x 3評分標準
+```{r}
+ggplot(X2, aes(x=Score)) + 
+  geom_bar(position="dodge") + facet_grid(AS ~ TYPE)
+```
+
+<span style="font-size:24px">`r "\U1F5FF"`:</span> 
+*如果我們要同時看大學生和研究生在每一份作業和每一個評分標準上面給分的分布，我們應該要怎麼做呢？* <br><br><br>
+
+#### 大學生與研究生的平均給分
+```{r fig.height=2.5, fig.width=6}
+tapply(X2$Score, X2$xGrade, mean) 
+```
+
+#### 各組的平均給分
+```{r fig.height=2.5, fig.width=6}
+rating = tapply(X2$Score, X2$xTeam, mean) 
+rating
+range(rating)
+```
+
+#### 各組的平均得分
+```{r fig.height=2.5, fig.width=6}
+rated = tapply(X2$Score, X2$rTeam, mean) %>% sort
+rated
+range(rated)
+```
+<br>
+
+<p class="qiz">
+<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
+&nbsp; ■ &nbsp; 由於我們的評分是自己小組的作業為基準，被評分數較高的小組會不會傾向於評出較低的分數呢？<br>
+&nbsp; ■ &nbsp; 請用統計的方法來檢定這一件事<br>
+&nbsp; ■ &nbsp; 請畫一個圖來檢驗這一件事<br>
+&nbsp; ■ &nbsp; 對資料科學家而言，上述哪一種方法比較有說服力呢？<br>
+&nbsp; ■ &nbsp; 對一般經理人員來說，上述哪一種方法比較有說服力呢？<br>
+</p class="qiz"><br>
+
+<br><br><br>
+
+
+
