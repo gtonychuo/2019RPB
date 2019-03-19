@@ -1,21 +1,22 @@
 ---
-title: 第三單元：基礎統計 with R
+title: 第五B單元：基礎統計 with R
 author: 中山大學管理學院 卓雍然
 date: "`r Sys.time()`"
 output: 
   html_document:
     highlight: pygments
     theme: flatly
-    css: ../style.css
+    css: style.css
 ---
 
-```{r echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
 rm(list=ls(all=T))
-knitr::opts_chunk$set(comment = NA, fig.height=3.5, fig.width=7)
+knitr::opts_chunk$set(comment = NA)
 knitr::opts_knit$set(global.par = TRUE)
-par(cex=0.7, mar=c(3,4,3,2))
-options(scipen=20, digits=4, width=92)
-library(magrittr)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
 ```
 <hr>
 
@@ -42,7 +43,12 @@ library(magrittr)
     + Applications of Normal Dist.
     + Applications of Poisson Dist.
 
-<br><hr>
+<br>
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr)
+```
+<hr>
+
 ### 【A】統計量 Statistics
 
 統計量(statistics)就是一群數值的摘要(summary)，常用的統計量有：
@@ -172,7 +178,7 @@ pnorm(55, mu, sd)
 ```
 
 <p class="qiz">
-<span style="font-size:24px">`r emo::ji("moai")` 問題討論：</span><br>
+<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
 A. 如果隨機變數`X ~ Normal[mu=100, sd=20]`，請求出以下機率： <br>
 &emsp; ■ `P[X < 110]`<br>
 &emsp; ■ `P[130 > X > 110]`<br>
@@ -203,7 +209,7 @@ qnorm(p=0.8, 100, 20)
 ```
 
 <p class="qiz">
-<span style="font-size:24px">`r emo::ji("moai")` 問題討論：</span><br>
+<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
 A. 如果隨機變數`X ~ Normal[mu=100, sd=20]`，請求`X`的90%信賴區間 <br>
 B. 請畫出圖形來解釋你的運算
 </p class="qiz">

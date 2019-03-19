@@ -1,21 +1,22 @@
 ---
-title: 第三單元：機率概論 with R
+title: 第五A單元：機率概論 with R
 author: 中山大學管理學院 卓雍然
 date: "`r Sys.time()`"
 output: 
   html_document:
     highlight: pygments
     theme: flatly
-    css: ../style.css
+    css: style.css
 ---
 
-```{r echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
 rm(list=ls(all=T))
 knitr::opts_chunk$set(comment = NA)
 knitr::opts_knit$set(global.par = TRUE)
 par(cex=0.8)
-options(scipen=20, digits=5, width=90)
-library(magrittr)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
 ```
 <hr>
 
@@ -29,12 +30,17 @@ library(magrittr)
 * 隨機變數: Random Variable
 * 重複實驗: `replicate()`
 * 分布 Distribution 
-    + 類別/數值分布 
-    + 數值/機率分布
+    + 類別 vs. 數值分布 
+    + 數值 vs. 機率分布
     + 抽樣分布: Sampling Distribution
-    + 實證/理論分布: Emperical/Theoretical Distribution
+    + 實證 vs. 理論分布: Emperical/Theoretical Distribution
 
-<br><hr>
+<br>
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr)
+```
+<hr>
+
 ### 【A】使用「向量物件」代表「族群」
 
 為了方便討論，通常我們用一個類別或數量向量(factor or numeric vector)來代表某一個族群，向量之中的每一個值，代表族群之中的某一個研究對象。
@@ -42,7 +48,7 @@ library(magrittr)
 ##### A1. `Skin`：用類別向量代表族群之中的類別變數
 產生一個長度為10的類別向量：`Skin`，用它來代表某一個10個人的族群當中每一個人的膚色
 ```{r}
-Skin = rep(c("White","Yellow","Black","Others"), (1:4)) %>% factor
+Skin = rep(c("White","Yellow","Black","Others"), 1:4) %>% factor
 Skin
 ```
 
@@ -51,31 +57,34 @@ Skin
 table(Skin)
 ```
 
-用長條圖觀察各分類的數量
+用直條圖觀察各分類的數量
 ```{r fig.height=3, fig.width=4}
-barplot(table(Skin), main="Dist. of Skin Color",xlab="Skin Color", ylab="Count")
+table(Skin) %>% 
+  barplot(main="Dist. of Skin Color",xlab="Skin Color", ylab="Count")
 ```
 
 ##### A2. `Weight`：用數值向量代表族群之中的數值變數
 產生一個長度為100的數值向量：Weight，，用它來代表某一個10個人的族群當中每一個人的膚色
 ```{r}
-set.seed(2)                 # set.seed for randomization
-Weight = rnorm(100,60,5)
+set.seed(2)                         # set.seed for randomization
+Weight = rnorm(100,mean=60,sd=5)    # 100 random samples
 ```
 
 用直方圖觀察它的數值分布，比較一下直條圖和直方圖有什麼異同
-```{r  fig.height=3.2, fig.width=7.2}
-par0 = par(cex=0.3, mfrow=c(1,2))
-hist(Weight)
-barplot(table(Skin), main="Dist. of Skin Color",xlab="Skin Color", ylab="Count",las=2)
+```{r  fig.height=3.2, fig.width=7.2, message=FALSE, warning=FALSE}
+par(mfrow=c(1,2), cex=0.8)
+hist(Weight, main="體重的分布")
+barplot(table(Skin), main="膚色的分布", xlab="", las=2)
 ```
 
-<span style="font-size:24px">`r emo::ji("moai")`:</span> 
-*直條圖和直方圖有什麼異同？* <br><br><hr>
+<span style="font-size:24px">`r "\U1F5FF"`:</span> 
+*直條圖和直方圖有什麼異同？* 
+
+<span style="font-size:24px">`r "\U1F5FF"`:</span> 
+*類別變數和數值變數的分布有什麼異同？* <br><br><hr>
 
 
-
-### 【B】數值分布函數和機率密度函數
+### 【B】數值分布和機率密度函數
 如果我們改變直方圖的`binwdith`
 ```{r fig.height=3.2, fig.width=7.2}
 par(mfrow=c(2,3), cex=0.75, mar=c(2,4,3,2))
@@ -83,8 +92,8 @@ for(bw in 1:6)
   hist(Weight, seq(45,75,bw), main=paste("bw =",bw),xlab="")
 ```
 <br><br>
-<span style="font-size:24px">`r emo::ji("moai")`:</span> 
-*`binwidth`代表什麼？ 它會如何改變直方圖的形狀？ 為甚麼？*<br>
+<span style="font-size:24px">`r "\U1F5FF"`:</span> 
+*`binwidth`代表什麼？ 它會如何改變直方圖的形狀？ 為甚麼？*<br><br>
 
 如果我們將族群增大為10,000人
 ```{r fig.height=3.2, fig.width=7.2}
@@ -93,8 +102,8 @@ for(bw in 1:6) {
   hist(W10K, breaks=seq(40,85,bw), main=paste("bw =",bw),xlab="")
   }
 ```
-
-將Y軸從「次數(Frequency)」改為**密度(Density)」，
+<br>
+將Y軸從「次數(Frequency)」改為「密度(Density)」，
 並且標上我們原先用來產生族群向量的「機率密度函數」
 ```{r fig.height=3.2, fig.width=7.2}
 for(bw in 1:6) {
@@ -105,7 +114,7 @@ for(bw in 1:6) {
 <br><br>
 
 <p class="wwl">
-<span style="font-size:24px">`r emo::ji("light_bulb")` 學習重點：</span><br>
+<span style="font-size:24px">`r "\U1F4A1"` 學習重點：</span><br>
 &nbsp; ■ &nbsp; 族群太小時，太窄或太寬的binwidth都很容易扭曲數值分佈的形狀<br>
 &nbsp; ■ &nbsp; 族群夠大時，我們就可以用較窄的binwidth，讓直方圖逼近真實的數值分布<br>
 &nbsp; ■ &nbsp; binwidth趨近於零時，不連續的「直方圖」就會逼近連續的「數值分布函數」<br>
@@ -115,14 +124,28 @@ for(bw in 1:6) {
 </p class="qiz">
 
 <p class="qiz">
-<span style="font-size:24px">`r emo::ji("moai")` 問題討論：</span><br>
-&nbsp; ■ &nbsp; 直方圖和數量分布函數之間有何異同？<br>
-&nbsp; ■ &nbsp; 數量分布函數和機率函數之間呢？<br>
-&nbsp; ■ &nbsp; 機率函數下方的總面積分是多大呢？<br>
+<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
+&nbsp; ■ &nbsp; 直方圖和數量分布之間有什麼關係？<br>
+&nbsp; ■ &nbsp; 數量分布和機率函數之間有何異同？<br>
+&nbsp; ■ &nbsp; 機率函數下方的總面積是多大呢？<br>
 </p class="qiz"><br>
+
+
+```{r fig.height=3.6, fig.width=6}
+W = 100
+par(mfrow=c(1,1),cex=0.7)
+curve(dbeta(x/W,2,2)/W,0,W,col='seagreen',lwd=3,main="Beta(2,2)",xlab="",y="Density")
+abline(v=seq(0,W,W/10),h=seq(0,1.5,0.1)/W,col='lightgray',lty=3)
+```
+
+<p class="qiz">
+<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
+&nbsp; ■ &nbsp; 從以上機率密度函數抽出80,000個樣本點，大約有多少點會落在40跟60之間？<br>
+&nbsp; ■ &nbsp; 如果以上機率密度函數的底(support)變為`[0, 1]`，它的最高點會變成多少？<br>
+&nbsp; ■ &nbsp; 如果它的底變為`[0.5, 0.6]`，它的最高點會變成多少？<br>
+</p class="qiz"><br>
+
 <hr>
-
-
 
 ### 【C】個別抽樣的類別隨機變數
 
@@ -152,10 +175,9 @@ skin1_10 %>% table %>% prop.table
 ```
 
 <p class="qiz">
-<span style="font-size:24px">`r emo::ji("moai")` 問題討論：</span><br>
+<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
 在這個例子裡面 ...<br>
-&emsp; ■ 我們的研究對象是？<br>
-&emsp; ■ 分析單位？<br>
+&emsp; ■ 我們的研究對象(分析單位)是？<br>
 &emsp; ■ 目標族群？<br>
 &emsp; ■ 目標變數？<br>
 &emsp; ■ 隨機變數？<br>
@@ -184,8 +206,7 @@ Trials = list(
   skin1_100 =  replicate(100, sample(Skin, size=1)),
   skin1_1K =   replicate(1000, sample(Skin, size=1)),
   skin1_10K =  replicate(10000, sample(Skin, size=1)),
-  skin1_100K = replicate(100000, sample(Skin, size=1)),
-  skin1_1M = replicate(1000000, sample(Skin, size=1))
+  skin1_100K = replicate(100000, sample(Skin, size=1))
   )
 Sys.time() - t0
 ```
@@ -219,17 +240,15 @@ Trials = list(
 
 ```{r  fig.height=4}
 par(cex=0.75, mfrow=c(2,3), mar=c(4,5,5,1))
-for(v in Trials) { hist(
-  v, breaks=seq(40,80,2.5), 
-  main=paste(length(v),"repeats"), 
-  xlab="Weight"
-  )}
+for(v in Trials) { 
+  hist(v,breaks=seq(40,80,2.5),main=paste(length(v),"repeats"),xlab="Weight")
+  }
 hist(Weight, breaks=seq(40,80,2.5), col='gray', border='lightgray' )
 ```
 <br><br>
 
 <p class="wwl">
-<span style="font-size:24px">`r emo::ji("light_bulb")` 學習重點：</span><br>
+<span style="font-size:24px">`r "\U1F4A1"` 學習重點：</span><br>
 關於『隨機變數』 ...<br>
 &emsp; ■ 隨機變數是定義在隨機實驗上面， 隨機實驗的結果就是隨機變數的值<br>
 &emsp; ■ 我們透過實驗來產生隨機變數的值，由於實驗的結果是隨機的，
@@ -255,16 +274,12 @@ hist(Weight, breaks=seq(40,80,2.5), col='gray', border='lightgray' )
 <hr>
 
 
-
 ##### 補充教材：練習使用`%>%`和`lapply()`
 善用`%>%`和`lapply()`可以降低程式的複雜度，也可以避免留下沒有用的(中間暫存)資料物件
 ```{r fig.height=4}
-lapply(10^(1:6), replicate, sample(Weight, 1)) %>% lapply(function(v) {
+lapply(10^(1:5), replicate, sample(Weight, 1)) %>% lapply(function(v) {
   hist(v, breaks=seq(40,80,2.5), main=paste(length(v),"repeats"), xlab="") 
   }) -> z
 ```
 
-```{r}
-par(par0)
-```
 
