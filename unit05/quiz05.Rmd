@@ -1,0 +1,56 @@
+---
+title: 第五單元：機率概論 with R
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
+```
+<hr>
+
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr)
+```
+
+##### `Skin`：用類別向量代表族群之中的類別變數
+產生一個長度為10的類別向量：`Skin`，用它來代表某一個10個人的族群當中每一個人的膚色
+```{r}
+Skin = rep(c("White","Yellow","Black","Others"), 1:4) %>% factor
+Skin
+```
+
+##### `Weight`：用數值向量代表族群之中的數值變數
+產生一個長度為100的數值向量：Weight，，用它來代表某一個100個人的族群當中每一個人的體重
+```{r}
+set.seed(2)                         # set.seed for randomization
+Weight = rnorm(100,mean=60,sd=5)    # 100 random samples
+Weight
+```
+<br>
+
+<p class="wwl">
+<span style="font-size:24px">`r "\U1F36D"` 有獎徵答：</span><br>
+以下這一段簡單的程式碼就可以畫出數值與類別變數的數量與機率分佈；你可以在雙引號之間補進正確的標題，如："類別變數的數量分布"、"數量"、"機率"、"密度"等等，讓圖形更加完整，更能幫助同學們分辨這四種不同的分佈嗎？ 程式筆記在這裡，請將妳做好的圖形直接貼在這則po文下面，最先做出正確答案的同學可以得到精美獎品一份(NT$300禮卷)，如果妳覺得圖形還有可以改善的空間，就可以繼續po，只要我們覺得妳的改進有道理，妳也可以得到相同獎品。 
+</p class="wwl">
+
+```{r}
+par(mfrow=c(2,2),cex=0.7)
+table(Skin) %>% barplot(main="", ylab="", xlab="Skin")
+table(Skin) %>% prop.table %>% barplot(main="", ylab="", xlab="Skin")
+hist(Weight, main="", ylab="")
+hist(Weight, freq=F, main="", ylab="")
+```
+
+<hr>
+
