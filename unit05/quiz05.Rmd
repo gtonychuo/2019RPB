@@ -45,11 +45,11 @@ Weight
 </p class="wwl">
 
 ```{r}
-par(mfrow=c(2,2),cex=0.7)
-table(Skin) %>% barplot(main="", ylab="", xlab="Skin")
-table(Skin) %>% prop.table %>% barplot(main="", ylab="", xlab="Skin")
-hist(Weight, main="", ylab="")
-hist(Weight, freq=F, main="", ylab="")
+par(mfrow=c(2,2),cex=0.75)
+table(Skin) %>% barplot(main="離散(類別)的數量分布", ylab="次數(頻率)", xlab="Skin")
+table(Skin) %>% prop.table %>% barplot(main="離散(類別)的機率分布", ylab="機率", xlab="Skin")
+hist(Weight, main="連續(數值)的數量分布", ylab="次數(頻率)")
+hist(Weight, freq=F, main="連續(數值)的機率分布", ylab="密度")
 ```
 
 <hr>
