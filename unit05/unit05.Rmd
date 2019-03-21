@@ -64,11 +64,16 @@ table(Skin) %>%
 ```
 
 ##### A2. `Weight`：用數值向量代表族群之中的數值變數
-產生一個長度為100的數值向量：Weight，，用它來代表某一個10個人的族群當中每一個人的膚色
+產生一個長度為100的數值向量：Weight，，用它來代表某一個100個人的族群當中每一個人的體重
 ```{r}
 set.seed(2)                         # set.seed for randomization
 Weight = rnorm(100,mean=60,sd=5)    # 100 random samples
 ```
+
+```{r}
+Weight
+```
+
 
 用直方圖觀察它的數值分布，比較一下直條圖和直方圖有什麼異同
 ```{r  fig.height=3.2, fig.width=7.2, message=FALSE, warning=FALSE}

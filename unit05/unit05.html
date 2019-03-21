@@ -147,7 +147,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">第五單元：機率概論 with R</h1>
 <h4 class="author"><em>中山大學管理學院 卓雍然</em></h4>
-<h4 class="date"><em>2019-03-19 22:05:57</em></h4>
+<h4 class="date"><em>2019-03-21 16:35:00</em></h4>
 
 </div>
 
@@ -195,9 +195,20 @@ Levels: Black Others White Yellow</code></pre>
 </div>
 <div id="a2.-weight" class="section level5">
 <h5>A2. <code>Weight</code>：用數值向量代表族群之中的數值變數</h5>
-<p>產生一個長度為100的數值向量：Weight，，用它來代表某一個10個人的族群當中每一個人的膚色</p>
+<p>產生一個長度為100的數值向量：Weight，，用它來代表某一個100個人的族群當中每一個人的體重</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">2</span>)                         <span class="co"># set.seed for randomization</span>
 Weight =<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">100</span>,<span class="dt">mean=</span><span class="dv">60</span>,<span class="dt">sd=</span><span class="dv">5</span>)    <span class="co"># 100 random samples</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Weight</code></pre></div>
+<pre><code>  [1] 55.515 60.924 67.939 54.348 59.599 60.662 63.540 58.802 69.922 59.306
+ [11] 62.088 64.909 58.037 54.802 68.911 48.445 64.393 60.179 65.064 62.161
+ [21] 70.454 54.000 67.948 69.773 60.025 47.741 62.386 57.017 63.961 61.448
+ [31] 63.695 61.595 65.381 58.579 56.117 57.022 51.370 55.487 57.205 58.767
+ [41] 58.082 50.204 55.791 69.518 63.112 69.955 58.473 59.546 59.079 54.006
+ [51] 55.809 70.332 57.189 66.379 54.762 50.171 58.385 64.679 65.696 68.358
+ [61] 51.059 70.156 56.484 60.791 62.531 55.900 50.006 57.604 60.421 55.523
+ [71] 55.394 61.652 59.292 62.174 59.731 55.464 66.518 63.859 65.263 52.950
+ [81] 64.980 51.521 57.333 53.139 48.960 69.111 56.733 58.577 58.065 61.933
+ [91] 68.002 68.406 54.082 53.208 52.437 53.734 69.797 60.038 55.787 56.994</code></pre>
 <p>用直方圖觀察它的數值分布，比較一下直條圖和直方圖有什麼異同</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="dt">cex=</span><span class="fl">0.8</span>)
 <span class="kw">hist</span>(Weight, <span class="dt">main=</span><span class="st">&quot;體重的分布&quot;</span>)
@@ -299,7 +310,7 @@ Trials =<span class="st"> </span><span class="kw">list</span>(
   <span class="dt">skin1_100K =</span> <span class="kw">replicate</span>(<span class="dv">100000</span>, <span class="kw">sample</span>(Skin, <span class="dt">size=</span><span class="dv">1</span>))
   )
 <span class="kw">Sys.time</span>() <span class="op">-</span><span class="st"> </span>t0</code></pre></div>
-<pre><code>Time difference of 3.9016 secs</code></pre>
+<pre><code>Time difference of 4.7524 secs</code></pre>
 <p><code>Trials</code>的子物件長度</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sapply</span>(Trials, length)</code></pre></div>
 <pre><code>  skin1_10  skin1_100   skin1_1K  skin1_10K skin1_100K 
