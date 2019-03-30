@@ -196,7 +196,7 @@ pnorm(55, mu, sd)
 ```
 
 <p class="qiz">
-<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
+<span style="font-size:24px">`r "\U1F9D9"` 問題討論：</span><br>
 A. 如果隨機變數`X ~ Normal[mu=100, sd=20]`，請求出以下機率： <br>
 &emsp; ■ `P[X < 110]`<br>
 &emsp; ■ `P[130 > X > 110]`<br>
@@ -230,7 +230,7 @@ qnorm(p=0.8, 100, 20)
 ```
 
 <p class="qiz">
-<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
+<span style="font-size:24px">`r "\U1F9D9"` 問題討論：</span><br>
 A. 如果隨機變數`X ~ Normal[mu=100, sd=20]`，請求`X`的90%信賴區間 <br>
 B. 請畫出圖形來解釋你的運算
 </p class="qiz">
@@ -260,7 +260,7 @@ curve(dnorm(x, mean=n*p, sd=sqrt(n*p*(1-p))), col='red', lwd=2, add=T)
 ```
 
 <span style="font-size:24px">`r "\U1F4A1"`</span> :
-When $n$ is not large enough, Binormal degenerates into a discrete distribution.
+When $n \times p$ is not large enough, Binomial degenerates into a discrete distribution.
 ```{r fig.height=2.4, fig.width=7.2}
 par(mfrow=c(1,2), cex=0.7)
 n = 10; p = 0.2
@@ -279,12 +279,20 @@ rpois(100000, 2)  %>% table %>% barplot(main="Poisson")
 ```
 
 <span style="font-size:24px">`r "\U1F4A1"`</span> :
+$X \sim Pois[\lambda] \, \Rightarrow \, E(X) = Var(X) = \lambda$ 
+
+<span style="font-size:24px">`r "\U1F4A1"`</span> :
 $X \sim Pois[\lambda_1], \, Y \sim Pois[\lambda_2] \, \Rightarrow \, X+Y \sim Pois[\lambda_1 + \lambda_2]$ 
 ```{r fig.height=2.4, fig.width=7.2}
 par(mfrow=c(1,2), cex=0.7)
-rbinom(100000, 1000, 0.002) %>% table %>% barplot(main="Boinomial")
-rpois(100000, 2)  %>% table %>% barplot(main="Poisson")
+(rpois(100000, 1) + rpois(100000, 2)) %>% table %>% barplot(main="Pois[1] + Pois[2]")
+rpois(100000, 3)  %>% table %>% barplot(main="Pois[3]")
 ```
+
+```{r fig.height=2.4, fig.width=7.2}
+dpois(0:10, 3) + dpois(0:10, 4) - dpois(0:10, 7)
+```
+
 <br><br>
 
 ##### D3. Geometric Dist. - the Dist. of Waiting Time
@@ -335,6 +343,23 @@ What is the probability of `nDeath >= 2`?
 ```{r}
 1 - ppois(1, fit$par$lambda)
 ```
+<br>
+
+<p class="qiz">
+<span style="font-size:24px">`r "\U1F9D9"` 問題討論：</span><br>
+如果保險公司想要為國防部設計一個被馬踢死的保險：<br>
+&emsp; ■ 如果你只要只靠`HorseKick`這一份數據，每一軍團每年被馬踢死的次數超過5次的機率是多？<br>
+&emsp; ■ 如果我們將數據fit到理論分布上面，根據理論分佈，被馬踢死的次數超過5次的機率是多？<br>
+&emsp; ■ 以上哪一種做法才是比較合理的做法的？<br>
+</p class="qiz">
+
+
+What is the probability of `nDeath >= 5`?
+```{r}
+1 - ppois(4, fit$par$lambda)
+```
+
+
 <br><br>
 
 ##### E2. "May" in Federalist Papers
@@ -371,8 +396,8 @@ pnbinom(6, fit$par$size, fit$par$prob) - pnbinom(1, fit$par$size, fit$par$prob)
 <br>
 
 <p class="qiz">
-<span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span><br>
-在`cup.csv`檔案裡面是一千個信徒的擲筊次數，假定每一個人都是擲到3次成功才停止，請問：
+<span style="font-size:24px">`r "\U1F9D9"` 問題討論：</span><br>
+在`cup.csv`檔案裡面是一千個信徒的擲筊次數，假定每一個人都是擲到3次成功才停止，請問：<br>
 &emsp; ■ 這個筊的成功機率大約是？<br>
 &emsp; ■ 請畫出用這個筊擲10次成功之前，失敗次數的機率分布？<br>
 &emsp; ■ 用這個筊擲15次還不能有5次成功的機率是？<br>

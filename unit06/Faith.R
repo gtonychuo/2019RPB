@@ -1,6 +1,12 @@
+head(faithful)
+summary(D)
+hist(D)
+
 D = faithful$eruptions  # copy to a short name
 
+
 # Frame
+par(cex=0.7)
 plot(0,0,xlim=c(1.5,5.25),ylim=c(0,1.1),xlab="噴發時間(分鐘)", 
      ylab="密度 or (累計)機率", main="分布、機率與密度")
 abline(h=1, col='lightgray', lwd=0.25, lty=2)
@@ -11,9 +17,9 @@ rug(D)
 plot(ecdf(D), cex=0, verticals=T, lwd=2, col='darkgray', add=T)
 
 # Histogram PDF
-Bins = 20                             # no. bins
-bx = seq(min(D), max(D), length=Bins) # break sequence 
-hist(D, col="#B3FFFF7F", border="white", ylim=c(0,1.1),
+Bins = 20                               # no. bins
+bx = seq(min(D), max(D), length=Bins+1) # break sequence 
+hist(D, col="#B3FFFF7F", border="white", 
      freq=F, breaks=bx, add=T)
 abline(h=0, col='lightgray', lwd=0.25)
 # Histogram CDF
@@ -39,8 +45,8 @@ rect(x1,-0.1,x2,1.2,col= rgb(0,1,0,alpha=0.2),border=NA)
 # Calculate Probability
 (integrate(PDF, x1, x2)$value)
 
-###############################
-rbinom(1000000, 1000, 0.2) %>% hist(breaks=100,freq=F)
-curve(dnorm(x,mean=200,sd=sqrt(160)), col='red', lwd=2, add=T)
+
+
+
 
 
