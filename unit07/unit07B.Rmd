@@ -1,0 +1,237 @@
+---
+title: UNIT07B：統計概論 with R
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
+```
+<hr>
+
+**單元摘要：** 統計概論 with R
+
+* A. 簡單統計量
+* B. 抽樣分布
+* C. 大數法則、中央極限定理
+* D. 統計檢定
+* E. 統計檢定的原理
+
+<br>
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr, ggplot2)
+```
+<hr>
+
+### 【A】簡單統計量
+
+##### 案例一：The `chickwts` dataset 
+
+```{r}
+str(chickwts)
+```
+
+```{r}
+summary(chickwts)
+```
+
+```{r}
+X = chickwts$weight
+mu = mean(X)
+sd = sd(X)
+c(mu, sd)
+```
+
+```{r fig.height=3, fig.width=7.5}
+par(cex=0.7)
+curve(dnorm(x,mu,sd), mu-3*sd, mu+3*sd, col='red', lwd=2)
+hist(X, freq=F, add=T)
+```
+<br>
+
+##### 案例二：The `faithful` dataset 
+
+```{r}
+X = faithful$eruptions
+mu = mean(X)
+sd = sd(X)
+c(mu, sd)
+```
+
+```{r fig.height=3, fig.width=7.5}
+par(cex=0.7)
+curve(dnorm(x,mu,sd), mu-3*sd, mu+3*sd, col='red', lwd=2, ylim=c(0, 0.55))
+hist(X, freq=F, add=T)
+```
+<br><hr>
+
+### 【B】抽樣分布
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+【抽樣分布】：樣本的統計量的機率分布<br>
+
+在R的工作環境裡面，我們用一個向量`popX`來代表目標族群中的某一個變數`X`
+```{r}
+set.seed(1234)
+popX = runif(50000, 0, 100)   # randomly draw 50K points from [0, 100]
+```
+
+用`sample()`這個功能做抽樣，抽樣的結果放在另外一個向量`samX`裡面
+```{r}
+samX = sample(popX, 20)
+c(pMU=mean(popX), pSD=sd(popX), sMU=mean(samX), sSD=sd(samX))
+```
+
+<span style="font-size:24px">`r "\U1F5FF"`：</span>
+重複執行以上這一個程式區塊，`pMU`和`pSD`會改變嗎？ `sMU`和`sSD`呢？<br>
+
+```{r fig.height=2.5, fig.width=7.5}
+S = replicate(2000, {
+  sx = sample(popX, 20)
+  c(sMu=mean(sx), sSD=sd(sx))
+  }) %>% t %>% data.frame
+par(mfrow=c(1,2), cex=0.7)
+hist(S$sMu, 20, freq=F,
+     main=sprintf("mu=%.1f, sd=%.1f", mean(S$sMu), sd(S$sMu)),
+     xlab = "sMu", ylab="")
+hist(S$sSD, 20, freq=F,
+     main=sprintf("mu=%.1f, sd=%.1f", mean(S$sSD), sd(S$sSD)),
+     xlab = "sSD", ylab="")
+```
+
+<p class="wwl">
+<span style="font-size:24px">`r "\U1F36D"` 有獎徵答：</span> <br>
+&emsp;■ 以上這兩個分佈，分別是什麼數值的分佈呢？<br>
+&emsp;■ 圖形主標題上這四個數字，分別代表什麼？<br>
+&emsp;■ 試將圖形主標題、X軸和Y軸標題改成中文<br>
+</p class="wwl">
+
+<span style="font-size:24px">`r "\U1F4A1"`：</span>
+其實以上這兩個圖形就是抽樣分佈，他們分別是樣本(`S`)的統計量(平均值、標準差)的分佈。<br>
+
+<br><hr>
+
+### 【C】大數法則、中央極限定理
+
+<span style="font-size:24px">`r "\U1F4A1"`</span> 
+【中央極限定理】：反覆從目標族群中抽取樣本，當樣本夠大、抽取次數夠多時，不論原族群呈現何種分佈，這些樣本的平均值會呈現常態分配。而且樣本平均數的平均值會趨近於族群平均值。<br>
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+【大數法則】：當樣本愈大，所得到樣本平均數會愈相似，而且愈趨近母群體平均數；
+當樣本大小增加$k$倍，樣本平均值的標準差會縮小$\sqrt{k}$倍。<br>
+
+我們將抽樣次數固定在2000，樣本大小則從4,16,64,...增加到4096。
+```{r fig.height=4, fig.width=8}
+par(mfrow=c(2,3), cex=0.6, mar=c(3,3,4,2))
+set.seed(2)
+S = sapply(4^(1:6), function(n) {
+  v = replicate(2000, mean(sample(popX, n)))
+  hist(v, 20, freq=F, ylab="", xlab="",
+       main=sprintf("%d: mu=%.1f, sd=%.2f", n, mean(v), sd(v)))
+  })
+```
+
+<br><hr>
+
+### 【D】統計檢定
+
+<span style="font-size:24px">`r "\U1F33B"`：</span>
+[Choosing Statistical Test](https://stats.idre.ucla.edu/other/mult-pkg/whatstat/), Inst. of Digital Research & Education, UCLA<br> 
+
+```{r}
+hsb2 <- within(read.csv("https://stats.idre.ucla.edu/stat/data/hsb2.csv"), {
+    race <- as.factor(race)
+    schtyp <- as.factor(schtyp)
+    prog <- as.factor(prog)
+})
+attach(hsb2)
+```
+
+##### D1. One Sample t-Test
+```{r}
+t.test(write, mu = 50)
+```
+$\because$ 如果族群中`write`的平均值等於50，我們會抽到『這種』樣本的機會小於 $p=0.000051$<br>
+$\therefore$ 給定這個樣本，我們可以拒絕「`write`的平均值等於50」的虛無假設<br>
+換句話說，我們可以推論：<br>
+■ `write`的平均值等於50的機會「很小」，但是不能推論「機會小於$p$」<br>
+■ `write`的平均值和50之間有「顯著」的差距<br><br>
+
+##### D2. Two Independent Samples t-Test
+```{r}
+t.test(write ~ female)
+```
+$\because$ 如果族群中男生和女生的`write`的平均值相等，我們會抽到『這種』樣本的機會小於 $p=0.00034$<br>
+$\therefore$ 給定這個樣本，我們可以拒絕「男生和女生的`write`的平均值相等」的虛無假設<br>
+換句話說，我們可以推論：<br>
+■ 男生和女生的`write`的平均值相等的機會「很小」，但是不能推論「機會小於$p$」<br>
+■ 男生和女生的`write`的平均值之間有「顯著」的差距<br><br>
+
+##### D3. Binomial Test
+```{r}
+prop.test(sum(female), length(female), 0.5)
+```
+$\because$ 如果族群中女生的比例等於0.5，我們會抽到『這種』樣本的機會小於 $p=0.23$<br>
+$\therefore$ 給定這個樣本，我們不能拒絕「女生的比例等於0.5」這個虛無假設<br>
+嚴格來講，我們不能拒絕虛無假設，就不應該再往前做推論，但是我們可以說：<br>
+■ 根據樣本，族群中女生的比例和0.5之間「沒有顯著」的差距<br><br>
+
+##### D4. Chi-Square Goodness of Fit Test
+```{r}
+chisq.test(table(race), p = c(10, 10, 10, 70)/100)
+```
+$\because$ 如果族群中`race`的比例是`1:1:1:7`，我們會抽到『這種』樣本的機會小於 $p=0.17$<br>
+$\therefore$ 給定這個樣本，我們不能拒絕「族群中`race`的比例是`1:1:1:7`」這個虛無假設<br>
+嚴格來講，我們不能拒絕虛無假設，就不應該再往前做推論，但是我們可以說：<br>
+■ 根據樣本，族群中`race`的比例和`1:1:1:7`之間「沒有顯著」的差距<br>
+
+會做這一個檢定這時候，通常我們是已經知道族群中的比率，只是想要透過檢定來確認我們的樣本中的比例和族群之中的比例沒有顯著差距。<br><br><hr>
+
+
+### 【E】統計檢定的原理
+
+給定虛無假設(`mu=50`)和樣本大小(`n=length(write)=200`)，我們可以算出X的抽樣分佈，也就是樣本的X變數的的平均值的分布；
+```{r fig.height=3, fig.width=7.5}
+par(mfrow=c(1,1), cex=0.7)
+x = hsb2$write; mu = 50; n = length(x) 
+set.seed(1)
+P = runif(50000, mu-25, mu+25)
+v = replicate(20000, mean(sample(P, n)))
+hist(v,freq=F)
+
+# given confidence level => critical values
+q95 = quantile(v, c(0.025, 0.975))  # 0.05
+q99 = quantile(v, c(0.005, 0.995))  # 0.01
+abline(v=c(mu, q95, q99), col=c('blue','cyan','cyan','pink','pink'), lty=2)
+
+# given sample statistics => p-value
+points(mean(x), 0, pch=16, col='red')
+rect(mean(x), -1, 56, 1, col="#FFFF003F", border=NA)
+rect(100-mean(x), -1, 44, 1, col="#FFFF003F", border=NA)
+
+```
+
+根據抽樣分佈：
+
+* 給定信心水準(或顯著水準)我們可以求出相對的臨界值
+* 給定樣本的統計量，我們可以求出p-value
+
+```{r}
+c(mean(write), mean(v > mean(write)), mean(v > mean(write))*2)
+```
+
+<br><br><br><hr>
+
+
+

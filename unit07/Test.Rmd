@@ -1,0 +1,107 @@
+---
+title: "統計檢定策略模擬"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: default
+    css: JH.css
+    social: menu
+    source_code: embed 
+    logo: nsysu48.png
+    favicon: nsysu48.png
+    orientation: rows
+runtime: shiny
+---
+
+
+```{r}
+library(shinyWidgets); library(flexdashboard); library(pwr)
+```
+
+Row {data-height=640}
+-------------------------------------
+### 預期報償試算 {data-width=640}
+```{r}
+ut = function(n,d,a,c,pay) {
+  b = 1 - pwr.t.test(n=n, d=d, sig=a)$power
+  sum(0.5*c(1-a, a, b, 1-b) * pay) - n * c
+  }
+
+renderPlot({
+  pay=c(input$TP, input$FP, input$FN, input$TN)
+  A = c(0.1,0.05,0.01,0.005); AS=as.character(A)
+  x = seq(30,input$X[2],10)
+  par(mar=c(4,4,2,1))
+  plot(1, 1, col='white', type='l', xlab='樣本大小',
+       ylab='$M(百萬美元)', main="期望報酬",
+       family = "Microsoft JhengHei",
+       xlim=c(input$X[1],input$X[2]),ylim=c(input$Y[1],input$Y[2]))
+  abline(v=seq(input$X[1],input$X[2],100),
+         h=seq(input$Y[1],input$Y[2],1),
+         col='lightgray',lty=3)
+  for(i in 1:length(A)) {
+    y = sapply(x, ut, d=input$D, a=A[i], c=input$C, pay=pay)
+    nx = x[which.max(y)]
+    pwr = pwr.t.test(nx,input$D,A[i])$power
+    AS[i] = sprintf("%.3f (%.3f, %d, %.3f)",A[i],pwr,nx,max(y))
+    lines(x, y, col=i, lwd=2)
+    points(nx, max(y),col=i,pch=19) }
+  legend("topright",AS,lty=1,col=1:length(A),lwd=2,
+         title="  Sig.level (Power,  N,  Ut.)")
+  })
+```
+
+### <span style="font-size:24px">`r "\U1F5FF"` 問題討論：</span>{data-width=320}
+
+【A】依預測的設定 ...
+
+1. 你的最佳樣本大小和期望報酬各是多少？
+
+2. 如果法規明定顯著水準必須是0.01，你的最佳樣本大小和期望報酬各是多少？
+
+3. 在0.05的顯著水準之下，樣本數是200、500、1000 的預期報酬各是多少？
+
+4. 如果開發一個測試工具的成本是50萬美金，它可以把樣本的單位成本降低到0.008，你會建議開發這個工具嗎？
+
+5. 以上的練習分別有哪一些管理意涵？
+
+<br>
+
+【B】請設想一個商業情境，並且 ...
+
+1. 討論你的最佳策略會如何隨著策略限制而變
+
+2. 對策略參數做敏感性分析，求出每一個參數的邊際效益 
+
+3. 設計出三個可以透過改變策略參數提高預期獲利的方法
+
+4. 從三個方法中選出最佳的策略
+
+
+Row {data-height=320}
+-------------------------------------
+### 報償向量 {data-width=480}
+```{r}
+inputPanel(
+  sliderInput("TP", "TP",   0, 50,  20, 5), 
+  sliderInput("FP", "FP", -50,  0, -40, 5),
+  sliderInput("FN", "FN", -50,  0, -30, 5), 
+  sliderInput("TN", "TN",   0, 50,   0, 5)
+  )
+
+```
+
+### 選項 {data-width=240}
+```{r}
+inputPanel(
+  sliderInput("C", "樣本單位成本", 0.005, 0.025, 0.01, 0.001),
+  sliderInput("D", "臨界效果", 0.05, 0.25, 0.20, 0.01)
+  )
+```
+
+### 視窗邊界調整 {data-width=240}
+```{r}
+inputPanel(
+  sliderInput("X", "X軸", 0, 2400, c(0,1600), 200),
+  sliderInput("Y", "Y軸", -6, 6, c(-5,4), 1)
+  )
+```

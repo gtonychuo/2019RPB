@@ -1,0 +1,138 @@
+---
+title: UNIT07C：統計檢定的商業應用
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
+```
+<hr>
+
+**單元摘要：** 統計檢定的商業應用
+
+* 統計檢定的混淆矩陣
+* 用R估計檢定力
+* 選擇樣本大小
+* 策略模擬：統計檢定
+
+<br>
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(pwr, lattice, gridExtra)
+```
+<hr>
+
+### (A) 統計檢定的混淆矩陣
+
+![圖一：統計檢定的混淆矩陣](testmx.png)
+
+<hr>
+
+### (B) 用R估計檢定力
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+檢定力(Test's Power)：事實為真時，檢定出顯性的機率<br><br>
+
+##### R的檢定力分析功能
+<span style="font-size:24px">`r "\U1F33B"`：</span>
+[Power Analysis](https://www.statmethods.net/stats/power.html), Quick-R, DataCamp<br> 
+
+<br>
+
+##### `pwr.t.test(n, d, sig.level, power, type, alternative)`
+
+檢定力的決定因素：
+
+* `n`: sample size 樣本大小
+* `d`: effect size, in standard error 臨界效果
+* `sig.level`: significant level 顯著水準
+* `power`: test's power 檢定力
+
+其他選項：
+
+* `type = c("two.sample", "one.sample", "paired")`
+* `alternative = c("two.sided", "less", "greater")`
+
+```{r}
+pwr.t.test(d=0.2, sig=0.05, power=0.80)
+```
+臨界效果設為0.2時，顯著水準0.05的雙邊t檢定需要394個樣本點才能得到80%的檢定力。
+
+```{r}
+pwr.t.test(n=160, d=0.25, sig=0.01, alt="greater")
+```
+臨界效果設為0.25時，用160個樣本點做顯著水準0.01的單邊t檢定只能得到46%的檢定力。
+<br><hr>
+
+### (C) 選擇樣本大小
+
+```{r fig.height=12, fig.width=8}
+gd = data.frame(expand.grid(sig.level=seq(0.005,0.10,0.005),
+                            power=seq(0.8,0.99,0.01) ))
+plots = list()
+for(i in 1:6) {
+  gd$n = apply(gd,1,function(g) pwr.t.test(d=i*0.2,sig=g[1],power=g[2])$n)
+  plots[[i]] = contourplot(n ~ sig.level*power,data=gd,col='green',cuts=10,lwd=2,
+     main=list(sprintf("Required Sample Size, d=%.2f",i*0.2),cex=0.85),
+     labels=list(cex=0.8,alpha=0.6,font=2,col='darkgreen'),
+     panel = function(...) { panel.levelplot(...)
+       panel.abline(v=c(0.005,0.01,0.05,0.1),
+                    h=seq(0.5,1,0.05),col='gray',lty=3) } )
+}
+grid.arrange(plots[[1]],plots[[2]],plots[[3]],plots[[4]],
+             plots[[5]],plots[[6]],ncol=2)
+```
+
+臨界效果越小、顯著水準越低、檢定力越高，需要的樣本越大。
+<br><hr>
+
+### (D) 策略模擬：統計檢定
+
+![圖二：統計檢定的預期報償](testpayoff.png)
+
+```{r}
+ut = function(n,d,a,c,pay) {
+  b = 1 - pwr.t.test(n=n, d=d, sig=a)$power
+  sum(0.5*c(1-a, a, b, 1-b) * pay) - n * c
+  }
+```
+
+```{r fig.height=5.5, fig.width=7}
+par(mar=c(4,4,4,2))
+d=0.2; c=0.01; pay=c(20, -40, -30, 0); maxn=1000
+A = c(0.1,0.05,0.01,0.005); AS=as.character(A)
+x = seq(30,maxn,10)
+plot(1, 1, col='white', type='l', xlab='Sample Size', ylab='$M',cex.main=1,
+     main="\nMax. Expexted Utility",xlim=c(0,maxn),ylim=c(-5,2.5))
+abline(v=seq(0,maxn,100),h=seq(-20,20,1),col='lightgray',lty=3)
+for(i in 1:length(A)) {
+  y = sapply(x, ut, d=d, a=A[i], c=c, pay=pay)
+  nx = x[which.max(y)]
+  pwr = pwr.t.test(nx,d,A[i])$power
+  AS[i] = sprintf("Sig.Level = %.3f, Power = %.3f, N = %d, Ut. = %.3f",
+                  A[i],pwr,nx,max(y))
+  lines(x, y, col=i, lwd=2)
+  points(nx, max(y),col=i,pch=19) }
+legend("bottomright",AS,lty=1,col=1:length(A),cex=0.8,lwd=2)
+
+```
+
+<br><br>
+
+<span style="font-size:48px">`r "\U1F9D9"`</span>
+[統計檢定策略模擬APP](http://140.117.69.135:4949/tonychuo/Test.Rmd)<br> 
+
+
+
+
+<br><br><br><br>
