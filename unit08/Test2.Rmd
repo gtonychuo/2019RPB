@@ -1,0 +1,349 @@
+---
+title: "檢定力策略模擬"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: default
+    css: JH.css
+    social: menu
+    source_code: embed 
+    logo: nsysu48.png
+    favicon: nsysu48.png
+runtime: shiny
+---
+
+```{r}
+library(shinyWidgets); library(flexdashboard); library(pwr)
+library(metRology); library(fitdistrplus); 
+library(ggpubr); library(lattice); library(gridExtra)
+
+K = 200000
+set.seed(2)
+P = list( Normal = rnorm(K, 50, 10),  Uniform = runif(K, 0, 100),
+          SkewRight = rtri(K, 20, 100, 30), SkewLeft = rtri(K, 0, 80, 70),
+          TriRight = rtri(K, 25, 100, 25), TriLeft = rtri(K, 0, 75, 75),
+          Beta2 = 100*rbeta(K, 2, 2), Beta.5 = 100*rbeta(K, .5, .5) )
+
+```
+
+
+假設檢定 {data-icon="fa-rocket"}
+=====================================================================
+
+Column A1 {.sidebar data-width=270}
+-------------------------------------
+```{r}
+# {r child = 'Test/theory.Rmd'}
+chooseSliderSkin("Nice")
+selectInput("pop", "族群分布函數", choices=list(
+  "Normal" = 1, "Uniform" = 2, "Skew.Right" = 3, "Skew.Left" = 4,
+  "Tri.Right" = 5, "TriLeft" = 6, "Beta(2,2)" = 7, "Beta(.5,.5)" = 8
+  ), selected=1)
+
+hr()
+sliderInput("Size", "樣本大小", 10, 320, 20, 10)
+sliderInput("Repeat", "抽樣次數", 400, 2400, 800, 200)
+prettyCheckbox(
+   "Fit", "實證密度函數", value = F,
+   icon = icon("check"), status = "success", animation = "jelly")
+
+hr()
+prettyRadioButtons(
+  "sides", "檢定方向", choices = list("無"=0, "單邊"=1, "雙邊"=2),
+  selected = 0, inline=T, icon=icon("check"), 
+  status="success", animation="jelly")
+prettyRadioButtons(
+  "sig", "顯著水準", choices=c(".05",".01",".005", "0"), 
+  selected=".05", inline=T, icon=icon("check"), 
+  status="success", animation="jelly")
+sliderInput("xbar", "樣本平均值", 50, 65, 55, 0.5)
+
+hr()
+sliderInput("Height", "視窗高度", 0.1, 0.8, 0.2, 0.02)
+sliderInput("Width", "視窗寬度", 0, 50, 10, 2)
+
+
+observeEvent(input$PA2click,{
+  if(input$PA2click$y < 0.01 & input$PA2click$x > 50)
+    updateSliderInput(session, "xbar", value = input$PA2click$x)
+  })
+
+VX = reactive({
+  replicate(input$Repeat, mean(sample(P[[as.integer(input$pop)]], input$Size)))
+  })
+
+```
+
+
+Column A2
+-------------------------------------
+### 族群分布 ($H_0: \mu = 50$)
+```{r}
+renderPlot({
+  i = as.integer(input$pop)
+  par(mar=c(4,4,2,1))
+  plot(
+    -1,0, xlim=c(0, 100), ylim=c(0, 40000), ylab="出現頻率(人數、樣本點數)", 
+    xlab="目標變數的值", family="Microsoft JhengHei", main=sprintf(
+      "%dK 族群分布 (%s Dist., Mean=%.2f, Sd=%.2f)", 
+      length(P[[i]])/1000, names(P)[i],  mean(P[[i]]), sd(P[[i]]) 
+      ) )
+  abline(v=seq(0,100,20), h=seq(0, 40000, 10000), col="lightgray", lty=3)
+  hist(
+    P[[i]], freq=T, border="lightgray", col="honeydew", 
+    breaks=c(-Inf, seq(0, 100, 5), +Inf), add=T
+    )
+  abline(v=mean(P[[i]]), col="seagreen")
+
+})
+```
+
+### 抽樣分布 (樣本平均值)
+```{r}
+renderPlot({
+  i = as.integer(input$pop)
+  xbar = as.numeric(input$xbar)
+  sig = as.numeric(input$sig)
+  X = input$Width; Y = input$Height
+  v = VX()
+  sd = fitdist(v, "norm", fix.arg=list(mean=50))$est
+  pval = mean(v > xbar)
+
+  par(mar=c(4,4,2,1))
+  plot(
+    -1,0, xlim=c(50-X, 50+X), ylim=c(0, Y), 
+    ylab="機率密度", family="Microsoft JhengHei",
+    xlab = sprintf("樣本平均值 (樣本大小 %d)", input$Size), 
+    main=sprintf("%d 抽樣分布 (Mean=%.1f, Sd=%.2f)", 
+                 length(v), mean(v), sd(v)))
+  hist(v, freq=F, border="lightgray", col="azure", 
+       breaks=seq(as.integer(min(v))-1, as.integer(max(v))+1,
+                  ifelse(sd(v) < 1.5, 0.5, 1)), add=T)
+  
+  if(input$Fit) {
+    d <- density(v, adjust=1.5)
+    lines(d, col='green', lwd=2)
+    }
+
+  if(input$sides == "0") return()
+
+  if(sig > 0) {
+    if(input$sides == "1") {
+      q = qnorm(1-sig, 50, sd)
+      text(q, Y, sprintf("%.4f", 1-sig), col="blue", pos=4, cex=1.2)
+    } else {
+      q = qnorm(c(1-sig/2,  sig/2), 50, sd)
+      text(q[1], Y, sprintf("%.4f", 1-sig/2), col="blue", pos=4, cex=1.2)
+      text(q[2], Y, sprintf("%.4f", sig/2), col="blue", pos=2, cex=1.2)
+    }
+    abline(v = q, col="blue", lty=2)
+  }
+
+  abline(v=50, col="orange")
+  curve(dnorm(x, 50, sd), 50-X, 50+X, col="orange", lwd=2, add=T)
+
+    x = seq(xbar,50+X,length=30) 
+  y = dnorm(x,50,sd)
+  polygon(c(xbar,x,50+X), c(0,y,0), col="#FFA50080", border=NA)
+  text(xbar, 0, sprintf("%0.4f", pval), col="red", pos=3, cex=1.2)
+  points(xbar, 0, pch=16, col="red", cex=1.2)
+  if(input$sides == "2") {
+    x = seq(50-X,100-xbar,length=30) 
+    y = dnorm(x,50,sd)
+    polygon(c(50-X,x,100-xbar), c(0,y,0), col="#FFA50080", border=NA)
+    text(100-xbar, 0, sprintf("%0.4f", pval), col="red", pos=3, cex=1.2)
+    points(100-xbar, 0, pch=1, col="red", cex=1.2)
+  }
+
+  }, 
+  
+  outputArgs=list(click="PA2click") )
+
+
+```
+
+Column A3
+-------------------------------------
+### 講義
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQr92D9CPCe8X31jUtgSJ-3tHt28A9dLM95sylCL2yExU8mU87htw5fG6yZgVfc69u3HfWioYz_e7gZ/embed?start=false&loop=false&delayms=3000" frameborder="0"  width="100%" height="100%"></iframe>
+
+### 影片
+<iframe width="100%" height="100%"  frameborder="0" src="https://www.youtube.com/embed/bn92a9f2Snc" allowfullscreen></iframe>
+
+
+
+
+混淆矩陣 {data-icon="fa-table"}
+=====================================================================
+```{r}
+set.seed(1234)
+wdata = data.frame(
+  sex = factor(rep(c("F", "M"), each=200)),
+  weight = c(rnorm(200, 55), rnorm(200, 55.1)))
+```
+
+Column B1 {data-width=60%}
+-------------------------------------
+### 兩獨立樣本的分布
+```{r}
+renderPlot({
+  ggdensity(wdata, x = "weight",
+   add = "mean", rug = TRUE,
+   color = "sex", fill = "sex",
+   palette = c("#00AFBB", "#E7B800"))
+  })
+```
+
+### 平均值比較檢定
+```{r}
+renderPlot({
+  p1 = ggboxplot(
+    wdata, x = "sex", y = "weight",
+    color = "sex", palette =c("#00AFBB", "#E7B800"),
+    add = "jitter") + ylim(51.5, 58.5) +
+    stat_compare_means(method="t.test")
+  
+  p2 = ggboxplot(
+    wdata, x = "sex", y = "weight",
+    color = "sex", palette =c("#00AFBB", "#E7B800"),
+    add = "jitter") + ylim(51.5, 58.5) +
+    stat_compare_means()
+  
+  ggarrange(p1, p2, nrow=1, ncol=2)
+  
+  })
+```
+
+Column B2 {data-width=40%}
+-------------------------------------
+### 講義
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vSX5B8-GptRkMcTBImxRqPT8_469NTI3riJh5zegeWMFfTA_peZKu9D6HDJVEVoisqtF4fLJDWrbBGn/embed?start=false&loop=false&delayms=60000" frameborder="0" width="100%" height="100%"></iframe>
+
+### 影片
+<iframe width="100%" height="100%"  frameborder="0" src="https://www.youtube.com/embed/D6r3qeL0tB8" allowfullscreen></iframe>
+
+
+檢定力分析 {data-icon="fa-medkit"}
+=====================================================================
+
+Column C1 {data-width=250}
+-------------------------------------
+### 單樣本雙邊t檢定
+```{r echo=TRUE}
+pwr.t.test(d=0.2, sig=0.05, power=0.80)
+```
+臨界效果設為0.2時，顯著水準0.05的單樣本雙邊t檢定需要394個樣本點才能得到80%的檢定力。
+
+### 單樣本單邊t檢定
+```{r echo=TRUE}
+pwr.t.test(n=160, d=0.25, sig=0.01, alt="greater")
+```
+臨界效果設為0.25時，用160個樣本點做顯著水準0.01的單樣本單邊t檢定只能得到46%的檢定力。 
+
+Column C2 {data-width=350}
+-------------------------------------
+### 選擇樣本大小
+```{r}
+renderPlot({
+  gd = data.frame(expand.grid(sig.level=seq(0.005,0.10,0.005),
+                             power=seq(0.8,0.99,0.01) ))
+  plots = list()
+  for(i in 1:6) {
+    gd$n = apply(gd,1,function(g) pwr.t.test(d=i*0.2,sig=g[1],power=g[2])$n)
+    plots[[i]] = contourplot(n ~ sig.level*power,data=gd,col='green',cuts=10,lwd=2,
+      main=list(sprintf("Required Sample Size (d=%.2f)",i*0.2),cex=0.85),
+      labels=list(cex=0.8,alpha=0.6,font=2,col='darkgreen'),
+      panel = function(...) { panel.levelplot(...)
+        panel.abline(v=c(0.005,0.01,0.05,0.1),
+        h=seq(0.5,1,0.05),col='gray',lty=3) } ) }
+  
+  grid.arrange(plots[[1]],plots[[2]],plots[[3]],plots[[4]],
+               plots[[5]],plots[[6]],ncol=2)
+  })
+```
+
+Column C3 {data-width=400}
+-------------------------------------
+### 講義
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQnRi9dPZaJi92mzOYi-uyuWRElOpUEo8IyYeKEPq2uOTBP-kAnyX5m2X1CGPSz1vVL9cSfvmulIxU7/embed?start=false&loop=false&delayms=60000" frameborder="0" width="100%" height="100%"></iframe>
+
+### 影片
+<iframe width="100%" height="100%"  frameborder="0" src="https://www.youtube.com/embed/Yz7gvufjWTk" allowfullscreen></iframe>
+
+
+策略模擬 {data-icon="fa-bar-chart"}
+=====================================================================
+
+Column D1 {.sidebar data-width=200}
+-------------------------------------
+```{r}
+# {r child = 'Test/simulate.Rmd'}
+hr()
+h6("報償向量")
+sliderInput("TP", "TP",   0, 50,  20, 5) 
+sliderInput("FP", "FP", -50,  0, -40, 5)
+sliderInput("FN", "FN", -50,  0, -30, 5) 
+sliderInput("TN", "TN",   0, 50,   0, 5)
+
+hr()
+h6("策略選項、專業考量")
+sliderInput("C", "樣本單位成本", 0.005, 0.025, 0.01, 0.001)
+sliderInput("D", "臨界效果", 0.05, 0.25, 0.20, 0.01)
+
+hr()
+```
+
+
+Column D2 {data-width=500}
+-------------------------------------
+### 預期報償試算 
+```{r}
+ut = function(n,d,a,c,pay) {
+  b = 1 - pwr.t.test(n=n, d=d, sig=a)$power
+  sum(0.5*c(1-a, a, b, 1-b) * pay) - n * c
+  }
+
+fillCol(flex=c(1, NA),
+  plotOutput("eRet", height="100%"),
+  inputPanel(
+    sliderInput("Y4", "Y軸", -6, 6, c(-3,3), 1),
+    sliderInput("X4", "X軸", 0, 2400, c(100,1300), 100)
+  )
+)
+
+output$eRet = renderPlot({
+  pay=c(input$TP, input$FP, input$FN, input$TN)
+  A = c(0.1,0.05,0.01,0.005); AS=as.character(A)
+  x = seq(30,input$X4[2],10)
+  par(mar=c(4,4,2,1))
+  plot(1, 1, col='white', type='l', xlab='樣本大小',
+       ylab='$M(百萬美元)', main="期望報酬", 
+       family="Microsoft JhengHei",
+       xlim=input$X4,ylim=input$Y4)
+  abline(v=seq(input$X4[1],input$X4[2],100),
+         h=seq(input$Y4[1],input$Y4[2],1),
+         col='lightgray',lty=3)
+  for(i in 1:length(A)) {
+    y = sapply(x, ut, d=input$D, a=A[i], c=input$C, pay=pay)
+    nx = x[which.max(y)]
+    pwr = pwr.t.test(nx,input$D,A[i])$power
+    AS[i] = sprintf("%.3f (%.3f, %d, %.3f)",A[i],pwr,nx,max(y))
+    lines(x, y, col=i, lwd=2)
+    points(nx, max(y),col=i,pch=19) }
+  legend("topright",AS,lty=1,col=1:length(A),lwd=2,
+         title="  Sig.level (Power,  N,  Ut.)")
+  })
+
+
+
+```
+
+Column D3 {data-width=300}
+-------------------------------------
+### 講義： 
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vSaVjw9t4JWegsA5hc8a9E69aRR2LpfYIEkGCE83cgeabrnFk74x8QToc_m8thCGsQuEL_vaiTeCpoV/embed?start=false&loop=false&delayms=60000" frameborder="0" width="100%" height="100%"></iframe>
+
+### 影片
+<iframe width="100%" height="100%"  frameborder="0" src="https://www.youtube.com/embed/zH8iEz0gCYo" allowfullscreen></iframe>
+
+
+

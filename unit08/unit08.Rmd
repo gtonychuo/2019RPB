@@ -1,0 +1,346 @@
+---
+title: UNIT08：統計概論 with R
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
+```
+<hr>
+
+**單元摘要：** 統計概論 with R
+
+* A. 抽樣分布
+* B. 大數法則、中央極限定理
+* C. 點估計與區間估計
+* D. 統計檢定
+* E. 統計檢定的原理
+* F. 顯著性的迷思
+* G. 檢定力分析與策略規劃
+
+<br>
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr, ggplot2, ggpubr)
+```
+<hr>
+
+### 【A】抽樣分布
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+【抽樣分布】：樣本的統計量的機率分布<br>
+
+在R的工作環境裡面，我們用一個向量`popX`來代表目標族群中的某一個變數`X`
+```{r}
+set.seed(1234)
+popX = runif(50000, 0, 100)   # randomly draw 50K points from [0, 100]
+```
+
+用`sample()`這個功能做抽樣，抽樣的結果放在另外一個向量`samX`裡面
+```{r}
+samX = sample(popX, 20)
+c(pMU=mean(popX), pSD=sd(popX), sMU=mean(samX), sSD=sd(samX))
+```
+
+<span style="font-size:24px">`r "\U1F5FF"`：</span>
+重複執行以上這一個程式區塊，`pMU`和`pSD`會改變嗎？ `sMU`和`sSD`呢？<br>
+
+```{r fig.height=2.5, fig.width=7.5}
+SampleMean = replicate(2000, mean( sample(popX, 20)))
+SampleSd = replicate(2000, sd( sample(popX, 20)))
+par(mfrow=c(1,2), cex=0.7)
+hist(SampleMean, 20, freq=F, xlab = "樣本平均值", ylab="機率密度", main=sprintf(
+  "樣本平均值的分佈 (mu=%.1f, sd=%.2f)\nDistribution of Sample Means", 
+  mean(SampleMean), sd(SampleMean)) )
+hist(SampleSd, 20, freq=F, xlab = "樣本標準差", ylab="機率密度", main=sprintf(
+  "樣本標準差的分佈 (mu=%.1f, sd=%.2f)\nDistribution of Sample Std. Deviation", 
+  mean(SampleMean), sd(SampleMean)) )
+```
+
+<span style="font-size:24px">`r "\U1F4A1"`：</span>
+以上這兩個圖形就是抽樣分佈，他們分別是樣本(`S`)的統計量(平均值、標準差)的分佈。<br>
+
+<br><hr>
+
+### 【B】大數法則、中央極限定理
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+【中央極限定理】：反覆從目標族群中抽取樣本，當樣本夠大、抽取次數夠多時，不論原族群呈現何種分佈，這些樣本的平均值會呈現常態分配。而且樣本平均數的平均值會趨近於族群平均值。
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+【中央極限定理】：反覆從目標族群中抽取樣本，當樣本夠大、抽取次數夠多時，不論原族群呈現何種分佈，這些樣本的平均值會呈現常態分配。而且樣本平均數的平均值會趨近於族群平均值。<br>
+
+```{r fig.height=4, fig.width=8}
+par(mfrow=c(2,3), cex=0.6, mar=c(3,3,4,2))
+set.seed(2)
+S = sapply(4^(1:6), function(n) {
+  v = replicate(2000, mean(sample(popX, n)))
+  hist(v, 20, freq=F, ylab="", xlab="", main=sprintf(
+    "Dist. Sample Means\nSampleSize:%d, mu=%.1f, sd=%.2f", n, mean(v), sd(v)))
+  })
+```
+我們將抽樣次數固定在2000，樣本大小則從4,16,...增加到4096，抽樣分佈的平均值不變，標準差從14.52縮小到0.43。<br><br><hr>
+
+
+### 【C】點估計與區間估計
+
+<p class="wwl">
+<span style="font-size:24px">`r "\U1F4A1"` 學習重點：</span><br>
+&nbsp; 推論統計的目的：用樣本的統計量，推論族群的統計量<br>
+&nbsp; 推論的方法：<br>
+&nbsp; &nbsp; ■ &nbsp; 點估計：用樣本統計量推論族群統計量<br>
+&nbsp; &nbsp; ■ &nbsp; 區間估計：透過抽樣分佈求取信心區間<br>
+</p class="wwl"><br>
+
+![推論統計的推論過程](InferStat.png)
+
+<br>
+
+##### C1. 已知族群的標準差
+
++ 假設： The Population is in $Norm[., \sigma]$
+
++ 點估計： $\bar{X} \rightarrow \mu$ <br>
+
++ 根據抽樣分佈 Based on Sampling Distribution:
+
+$$
+\mu \sim Norm[\bar{x}, \frac{\sigma}{\sqrt{n}}] \quad \quad (1)
+$$
+
++ 推論信心區間 Deriving Confidence Interval (CI) of $1-\alpha$：
+
+$$ 
+\frac{\bar{X}-\mu}{\sigma/\sqrt{n}} \sim Norm[0, 1] 
+\; \Rightarrow \; P[
+\bar{X}-z_{\alpha/2}\frac{\sigma}{\sqrt{n}},
+\bar{X}+z_{\alpha/2}\frac{\sigma}{\sqrt{n}}] = 1 - \alpha
+\quad \quad (2)
+$$
+
++ 用R計算信心區間：
+
+```{r}
+sample = (iris$Sepal.Width[iris$Species=="setosa"])
+n=length(sample); xbar=mean(sample); sd=sd(sample)
+c(n, xbar, sd)
+```
+
+```{r}
+sigma = 0.3        # known population sd
+a= 0.05            # 1 minus confidence level
+qnorm(c(a/2, 1-a/2), xbar, sigma/sqrt(n)) # CI in 1-a confidence lavel
+```
+Setosa蘭花的花萼平均寬度的95%信心區間是：CI95=[3.3448, 3.5112]
+
+<p class="qiz">
+<span style="font-size:24px">`r "\U1F5FF"` 討論問題：</span><br>
+&nbsp; 以上的推論結果表示：<br>
+&nbsp; &nbsp; 【A】大約有95%的Setosa的花萼寬度落在CI95裡面<br>
+&nbsp; &nbsp; 【B】Setosa的花萼寬度落在CI95的機率大約是95%<br>
+&nbsp; &nbsp; 【C】CI95大約會涵蓋95%的Setosa的花萼寬度<br>
+&nbsp; &nbsp; 【D】CI95大約有95%機率會涵蓋Setosa的花萼平均寬度<br>
+&nbsp; &nbsp; 【E】Setosa的花萼的平均寬度落在CI95的機率大約是95%<br>
+&nbsp; &nbsp; 【F】抽樣十萬次，大約會有5000次計算出來的CI95不涵蓋Setosa的花萼平均寬度<br>
+&nbsp; &nbsp; 【G】以上皆非<br>
+</p class="qiz"><br>
+
+
+##### C2. 不知道族群的標準差
+
++ 假設： The Population is in $Norm[., .]$
+
++ 點估計： $(\bar{x}, s) \rightarrow (\mu, \sigma)$
+
++ 根據抽樣分佈 Based on Sampling Distribution:
+
+$$
+\frac{\bar{X}-\mu}{s/\sqrt{n}} \sim t[n-1] \quad \quad (3)
+$$
+
++ 用R計算信心區間：
+
+```{r}
+sample = (iris$Sepal.Width[iris$Species=="virginica"])
+n=length(sample); xbar=mean(sample); sd=sd(sample)
+c(n, xbar, sd)
+```
+
+```{r}
+s = 0.7            # sample sd
+a= 0.05            # 1 minus confidence level
+# CI in 1-a confidence level
+xbar + qt(c(a/2, 1-a/2), n-1) * s/sqrt(n) 
+```
+Virginica蘭花的花萼平均寬度的95%信心區間是：CI95=[2.7751, 3.1729]
+<br><br>
+
+##### C3. Comparing Normal and t Distributions
+
+```{r fig.width=7.2, fig.height=6}
+par(mfrow=c(3, 3), mar=c(2,2,3,1), cex=0.6)
+for(df in seq(2,18,2)) {
+  curve(dnorm(x), -5, 5, col='blue', main=paste("df =", df)) # blue: Normal
+  curve(dt(x, df), -5, 5, col='red', add=T)                  # red: t-Dist.
+  }
+```
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+自由度(樣本大小減1)稍微大一點，這兩種分佈之間的差異就很小了。
+<br><br>
+
+##### C4. Bootstraping CI
+
+<span style="font-size:24px">`r "\U1F5FF"`</span>
+如果族群中的目標變數不是常態分佈的話要怎麼辦呢？
+
+```{r}
+x = iris$Sepal.Width
+bMean = replicate(2000, mean(sample(x, 5000, T)))
+a = 0.05
+quantile(bMean, c(a/2, 1-a/2))
+```
+
+<span style="font-size:24px">`r "\U1F33B"`：</span>
+Accelerated Introduction to Statistical Methods:  
+[Bootstrap Example](http://www.stat.wisc.edu/~larget/stat302/chap3.pdf), 
+Dept. Statistics, University of Wisconsin-Madison <br>
+
+<span style="font-size:24px">`r "\U1F33B"`：</span>
+Statistical Inference Week-4: [Power, Bootstrapping, & Permutation Tests](https://www.coursera.org/learn/statistical-inference), John Hopkins University 
+
+<br><hr>
+
+### 【D】統計檢定
+
+<span style="font-size:24px">`r "\U1F33B"`：</span>
+[Choosing Statistical Test](https://stats.idre.ucla.edu/other/mult-pkg/whatstat/), Inst. of Digital Research & Education, UCLA<br> 
+
+```{r}
+hsb2 <- within(read.csv("https://stats.idre.ucla.edu/stat/data/hsb2.csv"), {
+    race <- as.factor(race)
+    schtyp <- as.factor(schtyp)
+    prog <- as.factor(prog)
+})
+attach(hsb2)
+```
+
+##### D1. One Sample t-Test
+```{r}
+t.test(hsb2$write, mu = 50)
+```
+$\because$ 如果族群中`write`的平均值等於50，我們會抽到『這種』樣本的機會小於 $p=0.000051$<br>
+$\therefore$ 給定這個樣本，我們可以拒絕「`write`的平均值等於50」的虛無假設<br>
+換句話說，我們可以推論：<br>
+■ `write`的平均值等於50的機會「很小」，但是不能推論「機會小於$p$」<br>
+■ `write`的平均值和50之間有「顯著」的差距<br><br>
+
+##### D2. Two Independent Samples t-Test
+```{r}
+t.test(write ~ female, data=hsb2)
+```
+$\because$ 如果族群中男生和女生的`write`的平均值相等，我們會抽到『這種』樣本的機會小於 $p=0.00034$<br>
+$\therefore$ 給定這個樣本，我們可以拒絕「男生和女生的`write`的平均值相等」的虛無假設<br>
+換句話說，我們可以推論：<br>
+■ 男生和女生的`write`的平均值相等的機會「很小」，但是不能推論「機會小於$p$」<br>
+■ 男生和女生的`write`的平均值之間有「顯著」的差距<br><br>
+
+##### D3. Binomial Test
+```{r}
+prop.test(sum(female), length(female), 0.5)
+```
+$\because$ 如果族群中女生的比例等於0.5，我們會抽到『這種』樣本的機會小於 $p=0.23$<br>
+$\therefore$ 給定這個樣本，我們不能拒絕「女生的比例等於0.5」這個虛無假設<br>
+嚴格來講，我們不能拒絕虛無假設，就不應該再往前做推論，但是我們可以說：<br>
+■ 根據樣本，族群中女生的比例和0.5之間「沒有顯著」的差距<br><br>
+
+##### D4. Chi-Square Goodness of Fit Test
+```{r}
+chisq.test(table(race), p = c(10, 10, 10, 70)/100)
+```
+$\because$ 如果族群中`race`的比例是`1:1:1:7`，我們會抽到『這種』樣本的機會小於 $p=0.17$<br>
+$\therefore$ 給定這個樣本，我們不能拒絕「族群中`race`的比例是`1:1:1:7`」這個虛無假設<br>
+嚴格來講，我們不能拒絕虛無假設，就不應該再往前做推論，但是我們可以說：<br>
+■ 根據樣本，族群中`race`的比例和`1:1:1:7`之間「沒有顯著」的差距<br>
+
+會做這一個檢定這時候，通常我們是已經知道族群中的比率，只是想要透過檢定來確認我們的樣本中的比例和族群之中的比例沒有顯著差距。<br><br><hr>
+
+
+### 【E】統計檢定的原理
+
+給定虛無假設(`mu=50`)和樣本大小(`n=length(write)=200`)，我們可以算出X的抽樣分佈，也就是樣本的X變數的的平均值的分布；
+```{r fig.height=3, fig.width=7.5}
+par(mfrow=c(1,1), cex=0.7)
+x = hsb2$write; mu = 50; n = length(x) 
+set.seed(1)
+P = runif(50000, mu-25, mu+25)
+v = replicate(20000, mean(sample(P, n)))
+hist(v,freq=F)
+
+# given confidence level => critical values
+q95 = quantile(v, c(0.025, 0.975))  # 0.05
+q99 = quantile(v, c(0.005, 0.995))  # 0.01
+abline(v=c(mu, q95, q99), col=c('blue','cyan','cyan','pink','pink'), lty=2)
+
+# given sample statistics => p-value
+points(mean(x), 0, pch=16, col='red')
+rect(mean(x), -1, 56, 1, col="#FFFF003F", border=NA)
+rect(100-mean(x), -1, 44, 1, col="#FFFF003F", border=NA)
+
+```
+
+根據抽樣分佈：
+
+* 給定信心水準(或顯著水準)我們可以求出相對的臨界值
+* 給定樣本的統計量，我們可以求出p-value
+
+```{r}
+c(mean(write), mean(v > mean(write)), mean(v > mean(write))*2)
+```
+<br><br><hr>
+
+
+### 【F】顯著性的迷思
+```{r}
+library(ggpubr)
+set.seed(1234)
+wdata = data.frame(
+  sex = factor(rep(c("F", "M"), each=200)),
+  weight = c(rnorm(200, 55), rnorm(200, 55.1)))
+
+ggboxplot(
+  wdata, x = "sex", y = "weight",
+  color = "sex", palette =c("#00AFBB", "#E7B800"),
+  add = "jitter") + ylim(51.5, 58.5) +
+  stat_compare_means(method="t.test")
+```
+
+```{r}
+ggdensity(wdata, x = "weight",
+   add = "mean", rug = TRUE,
+   color = "sex", fill = "sex",
+   palette = c("#00AFBB", "#E7B800"))
+```
+<br><br><hr>
+
+### 【G】檢定力分析與策略規劃
+
+<span style="font-size:40px">`r "\U1F9D9"`</span>
+檢定力分析與策略規劃 [Shiny App](http://140.117.69.135:4949/tonychuo/Test2.Rmd)
+
+
+<br><br><br><hr>
+
+
+
