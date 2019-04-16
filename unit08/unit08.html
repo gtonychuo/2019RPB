@@ -147,7 +147,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">UNIT08：統計概論 with R</h1>
 <h4 class="author"><em>中山大學管理學院 卓雍然</em></h4>
-<h4 class="date"><em>2019-04-10 01:27:20</em></h4>
+<h4 class="date"><em>2019-04-10 15:00:13</em></h4>
 
 </div>
 
@@ -271,11 +271,10 @@ a=<span class="st"> </span><span class="fl">0.05</span>            <span class="
 n=<span class="kw">length</span>(sample); xbar=<span class="kw">mean</span>(sample); sd=<span class="kw">sd</span>(sample)
 <span class="kw">c</span>(n, xbar, sd)</code></pre></div>
 <pre><code>[1] 50.0000  2.9740  0.3225</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s =<span class="st"> </span><span class="fl">0.7</span>            <span class="co"># sample sd</span>
-a=<span class="st"> </span><span class="fl">0.05</span>            <span class="co"># 1 minus confidence level</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a=<span class="st"> </span><span class="fl">0.05</span>            <span class="co"># 1 minus confidence level</span>
 <span class="co"># CI in 1-a confidence level</span>
-xbar <span class="op">+</span><span class="st"> </span><span class="kw">qt</span>(<span class="kw">c</span>(a<span class="op">/</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">-</span>a<span class="op">/</span><span class="dv">2</span>), n<span class="op">-</span><span class="dv">1</span>) <span class="op">*</span><span class="st"> </span>s<span class="op">/</span><span class="kw">sqrt</span>(n) </code></pre></div>
-<pre><code>[1] 2.7751 3.1729</code></pre>
+xbar <span class="op">+</span><span class="st"> </span><span class="kw">qt</span>(<span class="kw">c</span>(a<span class="op">/</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">-</span>a<span class="op">/</span><span class="dv">2</span>), n<span class="op">-</span><span class="dv">1</span>) <span class="op">*</span><span class="st"> </span>sd<span class="op">/</span><span class="kw">sqrt</span>(n) </code></pre></div>
+<pre><code>[1] 2.8823 3.0657</code></pre>
 <p>Virginica蘭花的花萼平均寬度的95%信心區間是：CI95=[2.7751, 3.1729] <br><br></p>
 </div>
 <div id="c3.-comparing-normal-and-t-distributions" class="section level5">

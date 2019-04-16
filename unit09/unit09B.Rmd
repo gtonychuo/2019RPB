@@ -1,0 +1,63 @@
+---
+title: UNIT09B：多軸度比較分析
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
+```
+<hr>
+
+<br>
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr, ggplot2, readr, plotly, googleVis)
+```
+
+```{r}
+load("data/olist.rdata")
+load("data/Z.rdata")
+```
+<br><hr>
+
+### 使用 `ggplot`
+
+```{r}
+ggplot(segment, aes(x=log(avgItemsSold), y=avgPrice, col=avgScore)) +
+  geom_point(aes(size=sqrt(noSellers))) +
+  geom_text(aes(label=business_segment), size=3)
+```
+
+
+### 使用 `ggplotly`
+```{r}
+g = ggplot(segment, aes(x=log(avgItemsSold), y=avgPrice, col=avgScore)) +
+  geom_point(aes(size=sqrt(noSellers))) +
+  geom_text(aes(label=business_segment), size=0.5)
+ggplotly(g)
+```
+
+
+### 使用 `googleVis`
+```{r M1, results='asis', tidy=FALSE}
+segment$year = 2018
+op = options(gvis.plot.tag='chart')
+m1 = gvisMotionChart(
+  segment, "business_segment", "year",
+  options=list(width=720, height=480) )
+plot(m1)
+```
+
+<br><br><hr>
+

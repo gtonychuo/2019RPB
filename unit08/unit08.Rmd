@@ -178,10 +178,9 @@ c(n, xbar, sd)
 ```
 
 ```{r}
-s = 0.7            # sample sd
 a= 0.05            # 1 minus confidence level
 # CI in 1-a confidence level
-xbar + qt(c(a/2, 1-a/2), n-1) * s/sqrt(n) 
+xbar + qt(c(a/2, 1-a/2), n-1) * sd/sqrt(n) 
 ```
 Virginica蘭花的花萼平均寬度的95%信心區間是：CI95=[2.7751, 3.1729]
 <br><br>
