@@ -1,0 +1,102 @@
+---
+title: UNIT09C：集群分析與尺度縮減
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# 這些程式碼設定網頁的格式，並安裝、載入一些基本的套件，請大家不要去改動<br>
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
+```
+<hr>
+
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr, ggplot2, readr, FactoMineR, factoextra)
+# flexclust 
+```
+<br>
+
+### 【A】批發商資料集
+
+```{r}
+W = read.csv('data/wholesales.csv')
+W$Channel = factor( paste0("Ch",W$Channel) )
+W$Region = factor( paste0("Reg",W$Region) )
+W[3:8] = lapply(W[3:6], log, base=10)
+summary(W)
+```
+
+<br><br>
+
+### 【B】使用兩個區隔變數做分群
+
+```{r}
+hc = W[,3:4] %>% scale %>% dist %>% hclust
+plot(hc)
+rect.hclust(hc, k=5, border="red")
+```
+
+```{r}
+W$group = cutree(hc, k=5) %>% factor
+ggplot(W, aes(x=Fresh, y=Milk, col=group)) +
+  geom_point(size=3, alpha=0.5) + 
+  theme_light()
+```
+
+<br><br>
+
+### 【C】使用六個區隔變數做分群
+
+```{r}
+hc = W[,3:7] %>% scale %>% dist %>% hclust
+plot(hc)
+rect.hclust(hc, k=8, border="red")
+W$group = factor(cutree(hc, k=8))
+```
+
+```{r}
+fviz_dend(
+  hc, k=8, show_labels=F, rect=T, rect_fill=T,
+  labels_track_height=0,
+  palette="ucscgb", rect_border="ucscgb")
+```
+
+<br><br>
+
+### 【D】尺度縮減 (主成分分析, PCA - Principle Component Analysis)
+
+```{r}
+W[,3:8] %>% PCA(graph=F) %>% fviz_pca_biplot(
+  label="var", col.ind=W$group,
+  pointshape=19, mean.point=F,
+  addEllipses=T, ellipse.level=0.7,
+  ellipse.type = "convex", palette="ucscgb",
+  repel=T
+  )
+```
+<br><br>
+
+<p class="wwl">
+<span style="font-size:24px">`r "\U1F4A1"` 學習重點：</span><br>
+&emsp; ■ 集群分析的基本觀念<br>
+&emsp; ■ 距離矩陣：Distance Matrix<br>
+&emsp; ■ 層級式集群分析：Hierarchical Cluster Analysis<br>
+&emsp; ■ 樹狀圖(Dendrogram)的判讀<br>
+&emsp; ■ 依據樹狀圖決定要分多少群<br>
+&emsp; ■ 以群組平均值檢視各族群的屬性<br>
+</p class="wwl">
+
+<br><br><br><hr>
+
+
+

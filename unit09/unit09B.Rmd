@@ -50,7 +50,7 @@ ggplotly(g)
 
 
 ### 使用 `googleVis`
-```{r M1, results='asis', tidy=FALSE}
+```{r M1, results='asis', tidy=FALSE, eval=F}
 segment$year = 2018
 op = options(gvis.plot.tag='chart')
 m1 = gvisMotionChart(
