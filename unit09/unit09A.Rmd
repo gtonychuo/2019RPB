@@ -48,7 +48,7 @@ n_distinct(S$seller_id) == nrow(S)
 
 Products: `P$product_id`
 ```{r}
-n_distinct(S$seller_id) == nrow(S)
+n_distinct(P$product_id) == nrow(P)
 ```
 <br>
 
