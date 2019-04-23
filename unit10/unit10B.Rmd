@@ -1,0 +1,256 @@
+---
+title: UNIT10B：期中專案(OLIST)資料探索(2)
+author: 中山大學管理學院 卓雍然
+date: "`r Sys.time()`"
+output: 
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+# This Chunk is for format setting, Do NOT Change the codes !
+rm(list=ls(all=T))
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_knit$set(global.par = TRUE)
+par(cex=0.8)
+options(scipen=20, digits=5, width=80)
+if(!require(pacman)) install.packages("pacman")
+```
+<hr>
+
+**單元摘要：** 期中專案(OLIST)資料探索
+<br><br>
+
+```{r results='hide', message=FALSE, warning=FALSE}
+pacman::p_load(dplyr, MASS, dendextend, vegan, randomcoloR, googleVis, d3heatmap)
+```
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+請注意資料是放在上星期的資料夾裡面<br>
+```{r}
+load("../unit09/data/olist.rdata")
+load("../unit09/data/Z.rdata")
+```
+
+<br><br>
+
+### 【A】利用集群分析與尺度縮減的應用：產品(大項)分類
+
+##### A1. Pull `product_category_name_english` into `P`
+```{r}
+P = left_join(P, TPC) %>% rename(category = product_category_name_english)
+```
+
+##### A2. Merge `category` into `I`
+```{r}
+I = left_join(I, P[,c(1:10)])
+```
+
+##### A3. Make a Category_Seller Binary Matrix: `mx`
+```{r}
+mx = xtabs(~ category + seller_id, I) > 0
+dim(mx)
+```
+
+##### A4. Do Clusteing on Categories
+```{r fig.height=10, fig.width=7}
+dx= dist(mx, "binary")
+hcx = hclust(dx, method="ward.D2")
+par(mar=c(3,3,1,15), cex=0.8)
+dend = as.dendrogram(hcx)  # horizontal dendrogram
+plot(dend,horiz=T)
+```
+
+##### A5. Cut tree and make a nice dendrogram
+```{r fig.height=10, fig.width=7}
+k = 14; cols = distinctColorPalette(k)
+kg=cutree(hcx, k)
+dend %>% color_branches(k, col=cols) %>% color_labels(k) %>% plot(horiz=TRUE)
+dend %>% rect.dendrogram(k, horiz=TRUE, border="#C0C0C040", col='#C0C0C040')
+# abline(v=heights_per_k.dendrogram(dend)[as.character(k)]-0.03, lty=2, col="blue")
+```
+
+##### A6. Dimension Reduction by MDS - Multi-Dimension Scaling
+```{r}
+# There are many knids of MDS
+# mdx = cmdscale(dx, eig=T)  # classical MDS
+# mdx = isoMDS(dx)           # iso MDS
+mdx = metaMDS(dx, k=2)       # Nonmetric MDS
+```
+
+##### A7. Plot the Result as a Word Cloud 
+```{r fig.height=8, fig.width=8}
+x = mdx$points[,1]; y = mdx$points[,2] 
+par(mar=c(4,4,4,2), cex=0.65)
+plot(x, y, xlab="Dim1", ylab="Dim2", main="MDS", type="n")
+text(x, y, labels=row.names(mx), font=2, col=cols[kg])
+```
+
+<br>
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+程式語言可以幫助我們整理資料之外，也可以幫助我們連接各種不同的分析方法，某一些方法只有在與其他方法一起使用的時候，才能發揮它最大的效用。 
+
+<br><br><hr>
+
+### 【B】靜態與動態泡泡圖，品類之間的比較
+
+##### B1. 對品類(`category`)做彙總
+```{r}
+category = filter(I, !is.na(category)) %>% 
+  group_by(category) %>% summarise(
+    itemsSold = n(),
+    totalRev = sum(price),
+    avgPrice = mean(price),
+    noProduct = n_distinct(product_id),
+    noSeller = n_distinct(seller_id),
+    dummy = 2018
+  ) %>% arrange(desc(totalRev))
+```
+
+##### B2. 總營收最大的20個品類
+```{r}
+top20 = category$category[1:20]
+category[1:20,]
+```
+
+##### B3. 靜態泡泡圖
+```{r results='asis', tidy=FALSE, eval=F}
+op = options(gvis.plot.tag='chart')
+plot( gvisMotionChart(
+  category, "category", "dummy", 
+  options=list(width=800, height=600) ))
+```
+
+##### B4. 對品類(`category`)和季別(`quarter`)做彙總
+```{r}
+X = left_join(O[, c(1,4)], R[,2:3]) %>%     # pull score & timestamp into 'O'
+  rename(
+    time = order_purchase_timestamp, 
+    score = review_score) %>% 
+  mutate(                                   # cut timestamp into quarter    
+    quarter = as.Date(cut(time, "quarter"))
+    ) %>%  
+  right_join(I) %>%                         # merge score & quarter into 'I'
+  filter(category %in% top20) %>%           # pick out the top20 categories
+  group_by(category, quarter) %>% 
+  summarise(                            # summarise by category & quarter
+    itemsSold = n(),                     
+    totalRev = sum(price),
+    avgPrice = mean(price),
+    avgScore = mean(score),
+    noProduct = n_distinct(product_id),
+    noSeller = n_distinct(seller_id)
+  ) %>% 
+  arrange(category, quarter)            # order by category & quarter
+```
+
+##### B5. Some Adjustment before Ploting
+```{r}
+X2 = X %>% 
+  filter(quarter >= as.Date("2017-04-01")) %>% 
+  filter(!(category %in% c("computers", "office_furniture"))) %>% 
+  mutate(Score = pmax(avgScore, 3)) %>% as.data.frame
+```
+
+##### B6. 動態泡泡圖
+```{r results='asis', tidy=FALSE, eval=F}
+plot( gvisMotionChart( 
+  X2, "category", "quarter", 
+  options=list(width=800, height=600) ))
+```
+
+<br>
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+動態泡泡圖不但可以讓我們依各種軸度比較研究對象的之間的差異，它也可以幫助我們看到個體與整體的變化趨勢。 <br>
+
+<br><br><hr>
+
+### 【C】產業經濟應用 
+
+##### C1. 準備資料
+```{r}
+X = filter(I, !is.na(category)) %>% 
+  group_by(category, seller_id) %>%     # cascading groups
+  summarise(revenue = sum(price)) %>%   # drop last grouping
+  arrange(category, desc(revenue)) %>%  # arrange and ...
+  mutate(                               # mutate within cetegory
+    rn = row_number(desc(revenue)),  # rank by revenue
+    share = revenue/sum(revenue),    # market share 
+    c.share = cumsum(share)          # cumm. market share
+  )
+```
+
+##### C2. 計算產業集中度
+```{r}
+category = X %>% group_by(category) %>% 
+  summarise(
+    concentrate = sum(share^2),
+    top3.con = max(c.share[rn <= 3]),
+    top5.con = max(c.share[rn <= 5]),
+    top10.con = max(c.share[rn <= 10])
+  ) %>% 
+  right_join(category) %>% 
+  arrange(desc(concentrate))
+```
+
+```{r}
+filter(category, totalRev > 100000)[,c(1:4,7,10)]
+```
+
+<br><br><hr>
+
+### 【D】熱圖與集群分析的綜合應用
+
+##### D1. 每一州的顧客比率
+```{r}
+table(C$customer_state) %>% 
+  sort(decreasing=T) %>% 
+  prop.table %>% 
+  cumsum
+```
+
+##### D2. Merge `C$customer_state` into `I` via `O` 
+```{r}
+I = left_join(O[,1:2], C[,c(1,5)])[-2] %>%   # merge state into `O`
+  right_join(I) %>%                          # then merge to `I`
+  rename(state=customer_state)               # use a shoter name
+```
+
+##### D3. Make a Category_State Matrix  
+`mx[c,s]` is the number of `c` product items sold to `s`
+```{r}
+mx = xtabs(~ category + state, I)         # count the no. item sold
+# If we want to use total revenue instead of counts, simply do
+# mx = xtabs(price ~ category + state, I)  
+```
+
+```{r}
+dim(mx)  # 71 categories by 27 states
+```
+
+The data is heavily skewed
+```{r}
+hist(mx, main=range(mx))
+```
+
+use 1+log transformation and reverse color scheme
+```{r fig.height=15, fig.width=7}
+-log(1+mx) %>% as.data.frame.matrix %>% d3heatmap()
+```
+
+<br>
+
+<span style="font-size:24px">`r "\U1F4A1"`</span>
+除了用顏色表現矩陣裡面的數字，熱圖可以幫我們在矩陣的兩個方向分別做層級式集群分析，幫助我們看到資料裡面的結構。
+<br>
+
+
+
+<br><br><br><hr>
+
+
+
