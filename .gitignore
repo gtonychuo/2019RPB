@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 .httr-oauth
+temp/
 unit02/data
 unit03/data
 unit04/data
