@@ -24,9 +24,9 @@ if(!require(pacman)) install.packages("pacman")
 <br><br>
 
 ```{r results='hide', message=FALSE, warning=FALSE}
-if(!require(devtools)) install.packages("devtools")
-if(!require(morpheus)) devtools::install_github('cmap/morpheus.R')
-pacman::p_load(dplyr, d3heatmap, morpheus)
+# if(!require(devtools)) install.packages("devtools")
+# if(!require(morpheus)) devtools::install_github('cmap/morpheus.R')
+pacman::p_load(dplyr, d3heatmap)
 cols = colorRamp(c('seagreen','lightyellow','red'))
 ```
 
