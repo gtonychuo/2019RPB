@@ -24,8 +24,8 @@ if(!require(pacman)) install.packages("pacman")
 <br><br>
 
 ```{r results='hide', message=FALSE, warning=FALSE}
-# if(!require(devtools)) install.packages("devtools")
-# if(!require(morpheus)) devtools::install_github('cmap/morpheus.R')
+#if(!require(devtools)) install.packages("devtools")
+#if(!require(morpheus)) devtools::install_github('cmap/morpheus.R')
 pacman::p_load(dplyr, d3heatmap)
 cols = colorRamp(c('seagreen','lightyellow','red'))
 ```
@@ -98,15 +98,23 @@ d3heatmap(X,F,F,col=cols)
 <br>
 但是這樣做的話，我們只能看到顧客最多的哪一州(`SP`)和賣得最好的幾個品類。
 
+
+```{r eval=F}
+Morph = function(x, row=T, col=T, dendro="both", ...) {morpheus(
+  x, Rowv=row, Colv=col, dendrogram=dendro, colorScheme=list(
+  scalingMode="fixed", values=c(min(x),(min(x)+max(x))/2,max(x)) 
+  ), ...) } 
+```
+
+```{r eval=F}
+Morph(X, F, F, "none")
+```
+
 <br><hr>
 
 ### 【B】對數轉換 Log Transformation
 ```{r}
 range(X[X > 0])
-```
-
-```{r}
-
 ```
 
 ```{r fig.height=2.5, fig.width=7}
@@ -120,6 +128,12 @@ hist(log(51+X,10))
 ```{r fig.height=3.2, fig.width=6.4}
 d3heatmap(log(51+X,10),F,F,col=cols)
 ```
+
+<br>
+```{r eval=F}
+Morph(log(51+X,10),F,F,"none")
+```
+
 <br><hr>
 
 ### 【C】行列集群 Clustering over Rows and Columns
@@ -127,6 +141,12 @@ d3heatmap(log(51+X,10),F,F,col=cols)
 ```{r fig.height=4, fig.width=8}
 d3heatmap(log(51+X,10),col=cols)
 ```
+
+<br>
+```{r eval=F}
+Morph(log(51+X,10))
+```
+
 <br><hr>
 
 ### 【D】單方向常態化 1D-Normalization
@@ -142,8 +162,11 @@ d3heatmap(100*X/rowSums(X), Rowv=T, Colv=F, col=cols)
 
 當然，我們也可以在選擇品類這個方向做常態化，但是在這案例裏面，因為大部分的營收都集中在前幾大州，這樣做的用處不大。
 
-<br><hr>
+```{r eval=F}
+Morph(100*X/rowSums(X),T,F,"row")
+```
 
+<br><hr>
 
 ### 【E】雙向比例 Standardized Residuals
 前面說過，單方向的常態化有一個缺點，我們對一個方向(州)做常態化之後，另外一個方向(品類)的數值就失去了比較的基礎；如果我們想要在兩個方向上同時做分類和比較，我們可以把矩陣的標準化殘差(standardized residuals)畫成熱圖 
@@ -159,6 +182,13 @@ hist(r)                # check distribution
 cols = colorRamp(c('#008000','#f8f8f8','#f8f8f8','#b32400'))
 d3heatmap(r,col=cols)
 ```
+
+<br>
+```{r eval=F}
+Morph(r)
+```
+
+
 <br>
 
 這個圖形可以從兩個方向做判讀，
