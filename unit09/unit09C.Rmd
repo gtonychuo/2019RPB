@@ -29,10 +29,10 @@ pacman::p_load(dplyr, ggplot2, readr, FactoMineR, factoextra)
 ### 【A】批發商資料集
 
 ```{r}
-W = read.csv('data/wholesales.csv')
+W = read.csv('../unit09/data/wholesales.csv')
 W$Channel = factor( paste0("Ch",W$Channel) )
 W$Region = factor( paste0("Reg",W$Region) )
-W[3:8] = lapply(W[3:6], log, base=10)
+W[3:8] = lapply(W[3:8], log, base=10)
 summary(W)
 ```
 
@@ -58,15 +58,16 @@ ggplot(W, aes(x=Fresh, y=Milk, col=group)) +
 ### 【C】使用六個區隔變數做分群
 
 ```{r}
-hc = W[,3:7] %>% scale %>% dist %>% hclust
+hc = W[,3:8] %>% scale %>% dist %>% hclust
 plot(hc)
-rect.hclust(hc, k=8, border="red")
-W$group = factor(cutree(hc, k=8))
+k =9
+rect.hclust(hc, k=k, border="red")
+W$group = factor(cutree(hc, k=k))
 ```
 
 ```{r}
 fviz_dend(
-  hc, k=8, show_labels=F, rect=T, rect_fill=T,
+  hc, k=k, show_labels=F, rect=T, rect_fill=T,
   labels_track_height=0,
   palette="ucscgb", rect_border="ucscgb")
 ```
