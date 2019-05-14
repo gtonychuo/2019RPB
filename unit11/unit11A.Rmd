@@ -110,6 +110,33 @@ haireye
 ```
 
 ```{r}
+(mpProd = colSums(haireye)/sum(haireye)) # marginal prob.
+```
+
+```{r}
+(mpSale = rowSums(haireye)/sum(haireye)) # marginal prob.
+```
+
+```{r}
+# The expected prob. asssuming Prod & Sale are Independent
+(expProb = mpSale %o% mpProd)
+```
+
+```{r}
+sum(expProb)
+```
+
+```{r}
+(expVal = expProb * sum(haireye))
+```
+
+```{r}
+(s.res = (haireye - expVal) / sqrt(expVal))
+```
+
+
+
+```{r}
 mosaic(haireye, shade=T, labeling=labeling_residuals)
 ```
 
