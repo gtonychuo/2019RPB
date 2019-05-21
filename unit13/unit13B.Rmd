@@ -89,7 +89,7 @@ sapply(list(Train=cmx, Test=cmx2), A2x2)
 ```
 <br><br><hr>
 
-### 【B】作業曲線(ROC)與辨識率(AUC)
+### 【B】預測機率分佈、臨界機率、混淆矩陣
 
 ![Fig 13.2 - 預測機率分佈、臨界機率、混淆矩陣](Fig13.2.JPG)
 
