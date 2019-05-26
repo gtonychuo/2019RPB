@@ -83,7 +83,7 @@ summary(glm1)
 
 + $Odd_1 = Odd_0 \times Exp(b_1) \:\:(5)$
 
-+ $facr{Odd_1}{Odd_0} =  Exp(b_1) \:\:(6)$
++ $\frac{Odd_1}{Odd_0} =  Exp(b_1) \:\:(6)$
 
 <br>
 
