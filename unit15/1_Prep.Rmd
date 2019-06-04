@@ -1,0 +1,208 @@
+---
+title: TF1_資料彙整 
+author: 卓雍然, 中山大學 管理學術研究中心
+date: "`r Sys.time()`"
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+<br>
+
+### 資料彙整流程
+
+<center>
+
+![Fig-1: Pata Preparation](fig/aggregation.jpg)
+
+</center>
+
+<hr>
+
+### 1. 交易項目計錄：`Z`
+
+```{r echo=T, message=F, cache=F, warning=F}
+rm(list=ls(all=T))
+Sys.setlocale("LC_TIME","C")
+pacman::p_load(magrittr, readr, caTools, ggplot2, dplyr)
+```
+
+##### 1.1 讀進資料
+```{r}
+Z = read_csv("data/ta_feng_all_months_merged.csv") %>% data.frame %>% 
+  setNames(c("date","cust","age","area","cat","prod","qty","cost","price"))
+nrow(Z)
+```
+
+##### 資料格式轉換
+```{r}
+Z$date = as.Date(Z$date, format="%m/%d/%Y")
+Z$age[is.na(Z$age)] = "na"
+Z$age = factor(Z$age, levels=c(
+  "<25","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64",">65","na"), labels=c(
+  "a20","a25","a30","a35","a40","a45","a50","a55","a60","a65","na"
+  )) %>% as.character
+Z$area = paste0("z",Z$area)
+summary(Z)
+```
+
+##### 處理離群值
+```{r}
+# Quantile of Variables
+sapply(Z[,7:9], quantile, prob=c(.99, .999, .9995))
+```
+
+```{r}
+# Remove Outliers
+Z = subset(Z, qty<=24 & cost<=3800 & price<=4000) 
+nrow(Z)  
+```
+
+##### 彙總訂單 Assign Transaction ID
+```{r}
+Z$tid = group_indices(Z, date, cust) # same customer same day
+```
+
+##### 資料總覽
+```{r}
+# No. cust, cat, prod, tid
+sapply(Z[c("cust","cat","prod","tid")], n_distinct)
+```
+
+```{r}
+# Summary of Item Records
+summary(Z)
+```
+<br><hr>
+
+### 2. 交易計錄：`X`
+
+##### 交易資料彙整
+```{r}
+X = Z %>% group_by(tid) %>% summarise(
+  date = date[1],             # 交易日期  
+  cust = cust[1],             # 顧客 ID
+  age = age[1],               # 顧客 年齡級別
+  area = area[1],             # 顧客 居住區別
+  items = n(),                # 交易項目(總)數
+  pieces = sum(qty),          # 產品(總)件數
+  total = sum(price),         # 交易(總)金額
+  gross = sum(price - cost)   # 毛利
+  ) %>% data.frame
+nrow(X) # 119422                 
+```
+
+##### 交易摘要
+```{r}
+summary(X)    
+```
+
+##### 處理離群值
+```{r}
+# Check Quantile & Remove Outliers
+sapply(X[,6:9], quantile, prob=c(.999, .9995, .9999))
+```
+
+```{r}
+# Remove Outliers
+X = subset(X, items<=62 & pieces<95 & total<16000) # 119328
+```
+
+##### 每周交易次數
+```{r fig.height=3, fig.width=7}
+par(cex=0.8)
+hist(X$date, "weeks", freq=T, las=2, main="No. Transaction per Week")
+```
+<br><hr>
+
+### 3. 顧客資料：`A`
+
+##### 顧客資料彙整
+```{r}
+d0 = max(X$date) + 1
+A = X %>% mutate(
+  days = as.integer(difftime(d0, date, units="days"))
+  ) %>% 
+  group_by(cust) %>% summarise(
+    r = min(days),      # recency
+    s = max(days),      # seniority
+    f = n(),            # frquency
+    m = mean(total),    # monetary
+    rev = sum(total),   # total revenue contribution
+    raw = sum(gross),   # total gross profit contribution
+    age = age[1],       # age group
+    area = area[1],     # area code
+  ) %>% data.frame      # 33241
+nrow(A)
+```
+
+
+##### 顧客摘要
+```{r}
+summary(A) 
+```
+
+```{r fig.height=8}
+par(mfrow=c(3,2), mar=c(3,3,4,2))
+for(x in c('r','s','f','m')) 
+  hist(A[,x],freq=T,main=x,xlab="",ylab="",cex.main=2)
+hist(pmin(A$f,10),0:10,freq=T,xlab="",ylab="",cex.main=2)
+hist(log(A$m,10),freq=T,xlab="",ylab="",cex.main=2)
+```
+
+##### Check & Save
+```{r}
+is.na(Z) %>% colSums
+```
+
+```{r}
+is.na(X) %>% colSums
+```
+
+```{r}
+is.na(A) %>% colSums
+```
+
+```{r}
+A0 = A; X0 = X; Z0 = Z
+save(Z0, X0, A0, file="data/tf0.rdata")
+```
+<br><hr>
+
+
+### 4. 行銷企畫競賽 
+
+##### A.企畫項目
+
++ 1)利用既有和衍生的變數做顧客分群(標籤)
++ 2)根據顧客族群價值屬性，選取行銷重點、設定行銷目標
++ 3)製作模型：估計每一位顧客的：
+    + 回購機率
+    + 預期營收、預期獲利
+    + 終生價值
++ 4)根據顧客族群特徵，設計(至少兩項)行銷方案
++ 5)對方案的成本、效益進行(可以透過參數調整的)假設
++ 6)設計模擬程式，藉以： 
+    + 選擇行銷方案
+    + 設定方案參數
+    + 選擇行銷對象
+    + 估計成本效益
++ 7)做一個完整的行銷企劃報告：
+    + 經營現況
+    + 改善策略
+    + 行銷方案
+    + 預期成效
+
+##### B.評分項目
+
++ A) 能找出重要(卻不容易被發現的)顧客族群：(1~5)
++ B) 能找到或導出有預測力的變數：(1~5)
++ C) 能根據分析的結果選擇策略重點、設定策略(量化)目標：(1~5)
++ D) 能提出有效、有創意的行銷方案：(1~5)
++ E) 能設計出合理的假設：(1~5)
++ F) 能正確演練市場模擬的程序，清楚表達優化的邏輯：(1~5)
++ G) 整份行銷企劃的整體(影片+文案)品質：(1~5)
++ H) 投入資源執行這一份企劃的意願：(1~5)
+
+<br><br><br><br>
