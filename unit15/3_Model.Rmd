@@ -68,8 +68,9 @@ c(r2.tr, r2.ts)
 
 ### Prediction
 ```{r}
+load("data/tf0.rdata")
 d0 = max(X$date) + 1
-B = X %>% 
+B = X0 %>% 
   filter(date >= as.Date("2000-12-01")) %>% 
   mutate(days = as.integer(difftime(d0, date, units="days"))) %>% 
   group_by(cust) %>% summarise(
