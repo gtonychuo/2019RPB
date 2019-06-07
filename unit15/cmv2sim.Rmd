@@ -169,7 +169,25 @@ a = slider(  10,   30,    20, step=1),
 b = slider(   4,   20,    15, step=1)
 ) 
 ```
+<br><hr>
 
-<br><br><br>
+<p class="qiz">
+<span style="font-size:24px">`r "\U1F5FF"` 討論問題： </span><br>
+&emsp; ■ 這個市場模擬程序還有什麼不合理的地方嗎？
+&emsp; ■ 你可以改進這個模擬程序，讓它變得更合理嗎？<br><br>
+</p class="qiz">
 
+<p class="wwl">
+<span style="font-size:24px">`r "\U1F4A1"` 學習重點：</span><br>
+**策略規劃：假設、模擬、優化：**<br>
+&emsp; ■ 策略選項：重點、目標<br>
+&emsp; ■ 具體、貼切、合理的假設<br>
+&emsp; ■ 參數化：假設的一般性<br>
+&emsp; &emsp; &emsp; □ 策略選項參數<br>
+&emsp; &emsp; &emsp; □ 帶參數的假設<br>
+&emsp; ■ 市場模擬：預測、估計、優化<br>
+</p class="wwl"><br>
+
+
+<br><br>
 
