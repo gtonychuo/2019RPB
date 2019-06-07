@@ -173,7 +173,7 @@ b = slider(   4,   20,    15, step=1)
 
 <p class="qiz">
 <span style="font-size:24px">`r "\U1F5FF"` 討論問題： </span><br>
-&emsp; ■ 這個市場模擬程序還有什麼不合理的地方嗎？
+&emsp; ■ 這個市場模擬程序還有什麼不合理的地方嗎？<br>
 &emsp; ■ 你可以改進這個模擬程序，讓它變得更合理嗎？<br><br>
 </p class="qiz">
 
