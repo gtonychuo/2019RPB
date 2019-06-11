@@ -14,7 +14,7 @@ output:
 
 <center>
 
-![Fig-1: The First Model](fig/modeling.jpg)
+![Fig-1: The First Model](../unit15/fig/modeling.jpg)
 </center>
 
 <hr>
@@ -24,7 +24,7 @@ output:
 pacman::p_load(dplyr,ggplot2,caTools)
 rm(list=ls(all=TRUE))
 Sys.setlocale("LC_TIME","C")
-load("data/tf2.rdata")
+load("../unit15/data/tf2.rdata")
 ```
 
 ##### Spliting for Classification 
@@ -67,8 +67,9 @@ c(r2.tr, r2.ts)
 <br><hr>
 
 ### Prediction
+Aggregate data 2000-12-01 ~ 2001~02-28. 
 ```{r}
-load("data/tf0.rdata")
+load("../unit15/data/tf0.rdata")
 d0 = max(X0$date) + 1
 B = X0 %>% 
   filter(date >= as.Date("2000-12-01")) %>% 
@@ -86,18 +87,27 @@ B = X0 %>%
 nrow(B)
 ```
 
+In `B`, there is a record for each customer. `B$Buy` is the probability of buying in March.
 ```{r}
 B$Buy = predict(glm1, B, type="response")
 ```
 
+<span style="font-size:24px">`r "\U1F4A1"`：</span>
+預測購買金額時要記得做指數、對數轉換！
+
 ```{r}
-B$Rev = predict(lm1, B)
+B2 = B %>% mutate_at(c("m","rev"), log10)
+B$Rev = 10^predict(lm1, B2)
 ```
 
 ```{r fig.height=2.4, fig.width=7.2}
 par(mfrow=c(1,2), cex=0.8)
 hist(B$Buy)
 hist(log(B$Rev,10))
+```
+
+```{r}
+
 ```
 
 <br><br><hr><br><br>
