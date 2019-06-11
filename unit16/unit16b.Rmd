@@ -1,0 +1,25 @@
+---
+title: 期末報告準備 Q&A
+author: 卓雍然, 中山大學 管理學術研究中心
+date: "`r Sys.time()`"
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    css: style.css
+---
+
+
+### Loading Data
+```{r echo=T, message=F, cache=F, warning=F}
+pacman::p_load(ggplot2,caTools,dplyr)
+rm(list=ls(all=TRUE))
+Sys.setlocale("LC_TIME","C")
+load("../unit15/data/tf0.rdata")
+load("../unit15/data/tf3.rdata")
+```
+
+
+<br><br><hr><br><br>
+
+
